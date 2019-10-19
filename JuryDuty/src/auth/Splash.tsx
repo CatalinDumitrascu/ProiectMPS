@@ -20,29 +20,34 @@ class Splash extends React.Component<Props, State> {
     }
 
     checkScreen() {
-       /* setTimeout(()=>{
-            this.props.navigation.navigate("Login")
-       }, 2000);
-       */
-      data_base.ref()
+      // Testing the database
+     /* data_base.ref()
       .child('/test/')
       .child("test")
       .update({test: "test" });
-
+        */
     }
 
     render() {
         return (
-            <View style = {{flex: 1, justifyContent: 'center'}}>
-                <Text>Welcome to JuryDuty !</Text>
-                <TouchableOpacity>
-                    <View style = {{flexDirection: 'row'}}>
-                        <Text>ADMIN</Text>
+            <View style = {{flex: 1, justifyContent: 'center', backgroundColor: '#b8860b'}}>
+                {/* Intro title */}
+                <Text style = {{margin: 20, alignSelf: 'center', fontWeight: 'bold', fontSize: 20}}>
+                        Welcome to JuryDuty !</Text>
+                {/* Admin button */}
+                <TouchableOpacity 
+                    style = {{margin: 10, alignSelf: 'center', width: '80%', backgroundColor: 'white', borderRadius: 10}}
+                    onPress = {() => this.props.navigation.navigate("Login", {type: "ORG"})}>
+                    <View style = {{flexDirection: 'row', margin: 20, alignSelf: 'center'}}>
+                        <Text style = {{fontSize: 18}}>ORGANIZATOR</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity>
-                    <View style = {{flexDirection: 'row'}}>
-                        <Text>JURY</Text>
+                {/* Jury button */}
+                <TouchableOpacity 
+                    style = {{margin: 10, alignSelf: 'center', width: '80%', backgroundColor: 'white', borderRadius: 10}}
+                    onPress = {() => this.props.navigation.navigate("Login", {type: "JUR"})}>
+                    <View style = {{flexDirection: 'row', margin: 20, alignSelf: 'center'}}>
+                        <Text style = {{fontSize: 18}}>JURAT</Text>
                     </View>
                 </TouchableOpacity>
             </View>
