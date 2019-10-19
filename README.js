@@ -7,7 +7,15 @@
 - install react native
     1 https://facebook.github.io/react-native/docs/getting-started
 
+-   install cocoa pods
+
 // PACKAGES
+
+Just use this command to install all the packages
+
+npm install --save
+
+// Use only for brand new project
 
 - install react-native-navigation
     1 npm install react-navigation
