@@ -7,7 +7,8 @@
 - install react native
     1 https://facebook.github.io/react-native/docs/getting-started
 
--   install cocoa pods
+- install cocoa pods
+    https://guides.cocoapods.org/using/getting-started.html
 
 - build and run commands:
     react-native run-android
@@ -22,20 +23,23 @@ npm install --save
 // Use only for brand new project
 
 - install react-native-navigation
-    1 npm install react-navigation
-    2 npm install react-native-gesture-handler
-    3 cd ios
+     npm install react-navigation
+     npm install react-native-gesture-handler
+     cd ios
       pod install
       cd ..
 
 - install createStackNavigator
-    1 npm install react-navigation-stack
+     npm install react-navigation-stack
 
 - install firebase
-    1 npm install firebase --save
+     npm install firebase --save
 
 - for type errors
-    1 npm install @types/react
-    2 npm install @types/react-native
+     npm install @types/react
+     npm install @types/react-native
 
-- TODO install icons
+- install icons
+    https://github.com/oblador/react-native-vector-icons
+
+- install redux storage
