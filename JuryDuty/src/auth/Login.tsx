@@ -7,6 +7,16 @@ import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { NavigationScreenProp } from "react-navigation";
 import {fire_base, data_base} from '../res/Firebase'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { connect } from 'react-redux'
+const mapStateToProps = (state: any) => {
+	return {
+        
+	}
+}
+
+const mapDispatchToProps = (dispatch: any) => ({
+
+})
 
 interface Props {
     navigation: NavigationScreenProp<any>; 
@@ -136,4 +146,4 @@ class Login extends React.Component<Props, State> {
     }
 }
 
-export default Login
+export default connect(mapStateToProps, mapDispatchToProps)(Login)

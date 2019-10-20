@@ -17,6 +17,4 @@ const Navigator = createStackNavigator(
     }
   );
 
-  
-  
-  export const Navigation = createAppContainer(Navigator);
+export const Navigation = createAppContainer(Navigator);
