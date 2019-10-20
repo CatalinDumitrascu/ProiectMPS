@@ -9,6 +9,10 @@
 
 -   install cocoa pods
 
+- build and run commands:
+    react-native run-android
+    react-native run-ios
+
 // PACKAGES
 
 Just use this command to install all the packages
