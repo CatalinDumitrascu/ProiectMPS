@@ -43,3 +43,4 @@ npm install --save
     https://github.com/oblador/react-native-vector-icons
 
 - install redux storage
+    https://alligator.io/react/react-native-redux/
