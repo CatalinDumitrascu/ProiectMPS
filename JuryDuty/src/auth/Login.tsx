@@ -8,25 +8,39 @@ import { NavigationScreenProp } from "react-navigation";
 import {fire_base, data_base} from '../res/Firebase'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect } from 'react-redux'
+import {login} from '../res/actions'
+
+// TODO
+// check first if there is an event going on
+// if not, cant log in
+
+
+
 const mapStateToProps = (state: any) => {
 	return {
-        
+       
 	}
 }
 
 const mapDispatchToProps = (dispatch: any) => ({
-
+    onLogin(username: string) {
+        dispatch (
+            login(username)
+        )
+    }
 })
 
 interface Props {
     navigation: NavigationScreenProp<any>; 
+    onLogin(username: string): void
 }
   
 interface State {
-    login_type: any,
     username: string,
     password: string,
-    hide_password: boolean
+    hide_password: boolean,
+    error_message: string,
+    found_error: boolean,
 }
 
 class Login extends React.Component<Props, State> {
@@ -34,28 +48,24 @@ class Login extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            login_type: this.props.navigation.getParam('type', "" ),
             username: "",
             password: "",
-            hide_password: true
+            hide_password: true,
+            error_message: "",
+            found_error: false,
         }
     }
 
     renderHeader() {
         return (
-            <View style = {{flexDirection: 'row', marginBottom: 20, padding: 10, justifyContent: 'space-between'}}>
+            <View style = {{flexDirection: 'row', marginBottom: 20, padding: 10, justifyContent: 'space-between' ,backgroundColor: '#b8860b'}}>
                 <TouchableOpacity
                     onPress = {() => this.props.navigation.goBack()}>
                     <Icon name="arrow-left" size={30} color="white" />
                 </TouchableOpacity>
-                {this.state.login_type == "ORG"
-                    ?<Text style = {{color: 'white', fontSize: 20}}>
-                        Admin authentication
-                    </Text>
-                    :<Text style = {{color: 'white', fontSize: 20}}>
-                        Jury authentication
-                    </Text>
-                }
+                <Text style = {{color: 'white', fontSize: 20}}>
+                    Jury authentication
+                </Text>     
                 <TouchableOpacity></TouchableOpacity>
             </View>
         )
@@ -73,7 +83,7 @@ class Login extends React.Component<Props, State> {
                         color = "#8E9093"/>  
                 </View> 
                 <TextInput
-                        onChangeText={(text) => this.setState({username: text})}
+                        onChangeText={(text) => this.setState({username: text, found_error: false})}
                         placeholder={"Username"}
                         placeholderTextColor="#8E9093"
                         style={{flex: 1, fontSize: 18, marginRight: 40}}
@@ -98,7 +108,7 @@ class Login extends React.Component<Props, State> {
                         color = "#8E9093"/>  
                 </View> 
                 <TextInput
-                        onChangeText={(text) => this.setState({password: text})}
+                        onChangeText={(text) => this.setState({password: text, found_error: false})}
                         placeholder={"Password"}
                         autoCapitalize="none"
                         secureTextEntry={this.state.hide_password}
@@ -121,26 +131,65 @@ class Login extends React.Component<Props, State> {
     renderLoginButton() {
         return (
             <TouchableOpacity 
-                onPress = {() => this.login()}
-                style = {{alignSelf: 'center', margin: 20}}>
-                <Text>Login</Text>
+                onPress = {() => this.tryLogin()}
+                style = {{alignSelf: 'center', backgroundColor: '#8b4513',borderRadius: 10, margin: 20}}>
+                <Text style = {{fontSize: 18, color: 'white', paddingVertical: 20, paddingHorizontal: 40}}>Login</Text>
             </TouchableOpacity>
         )
     }
 
     // Try to login a user with the username and password provided
-    login() {
+    async tryLogin() {
+        const {username, password} = this.state
+        // Get password from database
+        let password_app = "parola"
 
+        // Create a new user with the username provided and matching password
+        if (username === null
+            || username.includes(' ') || username.trim() === "" ) {
+            // Email is invalid, put error
+            console.log("Invalid Username")
+            this.setState({found_error: true, error_message: "Invalid Username"})
+        } else if ( password === null || password.trim() === "" ) {
+            console.log("Invalid password")
+            this.setState({found_error: true, error_message: "Password is too short or invalid"})
+        }  else if (password !== password_app && password != "admin") {
+            console.log("Password incorrect")
+            this.setState({found_error: true, error_message: "Password incorrect"})
+        } else if (password == "admin" && username == "admin") {
+            // Admin pass
+            this.props.navigation.navigate("JurySetup", {username: username})
+        } 
+        else {
+            // Create an email based on the username
+            let email = username + "@juryduty.com"
+            console.log("Correct password and valid username \n Connecting user ...")
+            await fire_base.auth().createUserWithEmailAndPassword(email, password)
+                .then(() => (this.props.navigation.navigate("JurySetup", {username: username})))
+                .catch(error => (  (console.warn(error),
+                                    this.setState({found_error: true, error_message: "User already exists"}))))
+        }
     }
 
+      showErrorMessage() {
+        return (
+            <View style = {{position: 'absolute', bottom: 0, width: '100%',
+                            backgroundColor: '#800000'}}> 
+                <Text style = {{ padding: 10, color: 'white', alignSelf: 'center'}}>{this.state.error_message}</Text>
+            </View>
+        )
+    }
 
     render() {
         return (
-           <View style = {{flex: 1,  backgroundColor: '#b8860b'}}>   
+           <View style = {{flex: 1,  backgroundColor: '#fff8dc'}}>   
                {this.renderHeader()}
                {this.renderUserNameInput()}
                {this.renderPasswordInput()}
                {this.renderLoginButton()}
+               {this.state.found_error
+                ? this.showErrorMessage()
+                : <View></View>}
            </View>
         )
     }
