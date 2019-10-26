@@ -1,0 +1,43 @@
+<div class="container">
+        <div class="row">
+          <div class="col-xs-12 col-md-6 col-md-offset-3">
+            <h2>Add competitor</h2>
+            <br><br>
+            <form #addCompetitorForm="ngForm" (ngSubmit)="onSubmit(addCompetitorForm.value);addCompetitorForm.reset()">
+                <div class="form-group">
+                        <label for="title">Nume concurent/Echipa</label>
+                        <input
+                        type="text"
+                        class="form-control"
+                        id="name"
+                        required
+                        ngModel
+                        name="name"
+                        />
+                </div>
+                <button
+                class="btn btn-primary"
+                type="submit"
+                [disabled]="!addCompetitorForm.valid"
+              >
+                Submit
+              </button>
+              <br><br><br>
+              <h3>Lista concurentilor adaugati:</h3>
+              <div *ngIf="emptyTable; else elseBlock">Nici un concurent adaugat</div>
+              <ng-template #elseBlock>
+                  <table class="table table--responsive">
+                      <thead class="table__header">
+                          <th class="table__head--align-left">Nume</th>
+                      </thead>
+                      <tbody>
+                          <tr class="table__row" *ngFor="let competitor of competitors">
+                              <td class="table-cell">{{competitor.name}}</td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </ng-template>
+            </form>
+          </div>
+        </div>
+    </div>

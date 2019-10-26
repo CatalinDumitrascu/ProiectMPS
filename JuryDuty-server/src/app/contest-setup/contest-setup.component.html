@@ -1,0 +1,73 @@
+<div class="container">
+        <h2>Add a contest</h2>
+        <br><br>
+        <div class="row">
+          <div class="col-xs-12 col-md-6 col-md-offset-3">
+            <form #postForm="ngForm" (ngSubmit)="onSubmit(postForm.value)">
+                <div class="form-group">
+                    <label for="title">Tip concurs</label>
+                    <select 
+                        name="contest_type" 
+                        id="contest_type" 
+                        class="form-control"
+                        [(ngModel)]="postForm.contest_type">
+                        <option *ngFor="let contest_type of contest_types" [value]="contest_type.name">
+                          {{ contest_type.name }}
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group">
+                        <label for="title">Numar runde</label>
+                        <input
+                        type="text"
+                        class="form-control"
+                        id="rounds_number"
+                        required
+                        ngModel
+                        name="rounds_number"
+                        />
+                </div>
+                <div class="form-group">
+                    <label for="title">Numar serii per runda</label>
+                    <input
+                    type="text"
+                    class="form-control"
+                    id="series_number"
+                    required
+                    ngModel
+                    name="series_number"
+                    />
+                </div>
+                <div class="form-group">
+                        <label for="title">Numar concurenti per serie</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="competitors_number"
+                          required
+                          ngModel
+                          name="competitors_number"
+                        />
+                </div>
+                <div class="form-group">
+                    <label for="title">Parola conectare juriu</label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="password"
+                      required
+                      ngModel
+                      name="password"
+                    />
+                </div>
+              <button
+                class="btn btn-primary"
+                type="submit"
+                [disabled]="!postForm.valid"
+              >
+                Submit
+              </button>
+            </form>
+          </div>
+        </div>
+    </div>
