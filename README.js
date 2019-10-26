@@ -44,3 +44,11 @@ npm install --save
 
 - install redux storage
     https://alligator.io/react/react-native-redux/
+	
+	
+// setup for server:
+- having node js installed
+- install angular cli 
+	npm install -g @angular/cli
+- run command:
+	ng serve
