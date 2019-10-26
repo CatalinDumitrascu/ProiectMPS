@@ -1,0 +1,3 @@
+[submodule "JuryDuty-server"]
+	path = JuryDuty-server
+	url = https://github.com/CatalinDumitrascu/ProiectMPS.git
