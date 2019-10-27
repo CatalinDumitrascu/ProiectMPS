@@ -1,8 +1,12 @@
+
+
 export interface Competitor {
-    name: string;
+    name: string
   }
 
   export interface Contest {
+    contest_name: string,
+    contest_categ: Array<String>,
     contest_type: string,
     rounds_number: string,
     series_number: string,

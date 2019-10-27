@@ -12,13 +12,20 @@ import { environment } from '../environments/environment';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { AddCompetitorComponent } from './add-competitor/add-competitor.component';
+import { ScreenComponent } from './screen/screen.component';
+import { HomeComponent } from './home/home.component';
+import { EditContestComponent } from './edit-contest/edit-contest.component';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     ContestSetupComponent, 
-    AddCompetitorComponent
+    AddCompetitorComponent,
+    ScreenComponent,
+    HomeComponent,
+    EditContestComponent
   ],
   imports: [
     BrowserModule,
@@ -27,7 +34,8 @@ import { AddCompetitorComponent } from './add-competitor/add-competitor.componen
     AngularFireAuthModule,
     AngularFirestoreModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    NgMultiSelectDropDownModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]
