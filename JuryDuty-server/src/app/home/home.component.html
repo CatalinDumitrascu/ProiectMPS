@@ -4,11 +4,50 @@
                 <button
                     class="btn btn-lg btn-primary btn-block mb-1"
                     type="button"
-                    routerLink="/add-contest">
+                    routerLink="/add-contest"
+                    [disabled]=disabled>
                     Add contest
                 </button>
+                <button
+                    class="btn btn-lg btn-primary btn-block mb-1"
+                    type="button"
+                    (click)="manageRounds()">
+                    Start
+                </button>
                 <br> <br>
-                <p>Aici ar trebui sa apara concursul curent</p>
+                <h2>Current contest</h2>
+                <div *ngIf="emptyTable; else elseBlock">Nici un concurs curent</div>
+                <ng-template #elseBlock>
+                    <table class="table table--responsive">
+                        <thead class="table__header">
+                            <th class="table__head--align-left">Nume</th>
+                            <th class="table__head--align-left">Tip</th>
+                            <th class="table__head--align-left">Categorii Jurizare</th>
+                            <th class="table__head--align-left">Numar total de concurenti</th>
+                            <th class="table__head--align-left">Numar de runde</th>
+                            <th class="table__head--align-left">Numar de serii</th>
+                            <th class="table__head--align-left">Numar de concurenti per serie</th>
+                            <!-- <th class="table__head--align-left">Concurenti</th> -->
+                        </thead>
+                        <tbody>
+                            <tr class="table__row" >
+                            <!-- </tr>*ngFor="let contest of contests"> -->
+                                <td class="table-cell">{{contest.contest_name}}</td>
+                                <td class="table-cell">{{contest.contest_type}}</td>
+                                <td class="table-cell">
+                                    <div *ngFor="let categ of contest.contest_categ">
+                                        <td class="table-cell">{{categ.name}}</td>
+                                    </div>
+                                </td>
+                                <td class="table-cell">{{contest.total_competitors_number}}</td>
+                                <td class="table-cell">{{contest.rounds_number}}</td>
+                                <td class="table-cell">{{contest.series_number}}</td>
+                                <td class="table-cell">{{contest.competitors_number}}</td>
+                                <!-- <td class="table-cell">{{contest.payload.doc.data().competitors}}</td> -->
+                            </tr>
+                        </tbody>
+                    </table>
+                </ng-template>
                 <br><br>
                 <button
                     class="btn btn-lg btn-primary btn-block mb-1"

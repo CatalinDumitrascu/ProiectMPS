@@ -22,7 +22,7 @@ const routes: Routes = [
     component: EditContestComponent
   },
   {
-    path: 'add-competitor',
+    path: 'add-competitor/:id',
     component: AddCompetitorComponent
   },
   {

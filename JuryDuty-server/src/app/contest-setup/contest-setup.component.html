@@ -7,10 +7,10 @@
                 <div class="form-group">
                     <label for="title">Alegeti un concurs:</label>
                     <select 
-                        name="contest_name" 
-                        id="contest_name" 
+                        name="contest_name_id" 
+                        id="contest_name_id" 
                         class="form-control"
-                        [(ngModel)]="postForm.contest_name"
+                        [(ngModel)]="postForm.contest_name_id"
                         (change)="onSelect($event.target.value)">
                         <option *ngFor="let contest_name of contest_names" [value]="contest_name.id" >
                           {{ contest_name.name }}
@@ -30,14 +30,6 @@
                     </option>
                   </select>
                 </div>
-                <!-- <div class="form-group">
-                    <ul class="list-group">
-                        <li class="list-group-item" *ngFor="let category of categories">
-                          <input type="checkbox" value="{{category.name}}"/>
-                          {{category.value}}
-                        </li>
-                      </ul>
-                </div> -->
                 <div class="form-group">
                     <label for="title">Tip concurs</label>
                     <select 
@@ -49,6 +41,17 @@
                           {{ contest_type.name }}
                         </option>
                     </select>
+                </div>
+                <div>
+                  <label for="title">Numar total de concurenti</label>
+                    <input
+                    type="text"
+                    class="form-control"
+                    id="total_competitors_number"
+                    required
+                    ngModel
+                    name="total_competitors_number"
+                    />
                 </div>
                 <div class="form-group">
                         <label for="title">Numar runde</label>
