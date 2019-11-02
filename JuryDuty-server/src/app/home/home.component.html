@@ -5,7 +5,7 @@
                     class="btn btn-lg btn-primary btn-block mb-1"
                     type="button"
                     routerLink="/add-contest"
-                    [disabled]=disabled>
+                    [disabled]="!disabled">
                     Add contest
                 </button>
                 <button
@@ -25,7 +25,6 @@
                             <th class="table__head--align-left">Categorii Jurizare</th>
                             <th class="table__head--align-left">Numar total de concurenti</th>
                             <th class="table__head--align-left">Numar de runde</th>
-                            <th class="table__head--align-left">Numar de serii</th>
                             <th class="table__head--align-left">Numar de concurenti per serie</th>
                             <!-- <th class="table__head--align-left">Concurenti</th> -->
                         </thead>
@@ -35,14 +34,13 @@
                                 <td class="table-cell">{{contest.contest_name}}</td>
                                 <td class="table-cell">{{contest.contest_type}}</td>
                                 <td class="table-cell">
-                                    <div *ngFor="let categ of contest.contest_categ">
+                                    <div *ngFor="let categ of contest.contest_categs">
                                         <td class="table-cell">{{categ.name}}</td>
                                     </div>
                                 </td>
                                 <td class="table-cell">{{contest.total_competitors_number}}</td>
                                 <td class="table-cell">{{contest.rounds_number}}</td>
-                                <td class="table-cell">{{contest.series_number}}</td>
-                                <td class="table-cell">{{contest.competitors_number}}</td>
+                                <td class="table-cell">{{contest.competitors_number_per_serie}}</td>
                                 <!-- <td class="table-cell">{{contest.payload.doc.data().competitors}}</td> -->
                             </tr>
                         </tbody>

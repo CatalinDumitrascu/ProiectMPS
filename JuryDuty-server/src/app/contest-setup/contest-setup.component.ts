@@ -28,9 +28,9 @@ export class ContestSetupComponent implements OnInit {
     {id: 2, name: 'Gatit'}
   ]
   contest_categs = [
-    {id: 0, categories: [{name: 'Tehnica', weight: '35'}, {name: 'Coregrafie', weight: '35'}, {name: 'Impresie ansamblu', weight: '30'}]},
-    {id: 1, categories: [{name: 'Timbru', weight: '35'}, {name: 'Intonatie', weight: '35'}, {name: 'Interpretare', weight: '30'}]},
-    {id: 2, categories: [{name: 'Gust', weight: '35'}, {name: 'Aspect', weight: '35'}, {name: 'Inventivitate', weight: '30'}]}
+    {id: 0, categories: [{name: 'Tehnica', weight: '1/3'}, {name: 'Coregrafie', weight: '1/3'}, {name: 'Impresie ansamblu', weight: '1/3'}]},
+    {id: 1, categories: [{name: 'Timbru', weight: '1/3'}, {name: 'Intonatie', weight: '1/3'}, {name: 'Interpretare', weight: '1/3'}]},
+    {id: 2, categories: [{name: 'Gust', weight: '1/3'}, {name: 'Aspect', weight: '1/3'}, {name: 'Inventivitate', weight: '1/3'}]}
   ]
   categories = []
   currentContest = null
@@ -63,7 +63,7 @@ export class ContestSetupComponent implements OnInit {
   }
 
   onSubmit(contest: Contest){
-    contest.contest_categ = this.contest_categs[contest.contest_name_id].categories
+    contest.contest_categs = this.contest_categs[contest.contest_name_id].categories
     contest.contest_name = this.contest_names[contest.contest_name_id].name
     contest.done = false;
     return this.firebaseService.addContest(contest)

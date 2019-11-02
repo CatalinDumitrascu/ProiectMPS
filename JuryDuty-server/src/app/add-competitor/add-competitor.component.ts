@@ -33,6 +33,7 @@ export class AddCompetitorComponent implements OnInit {
         }
 
     ngOnInit() {
+        // iau id-ul concursului curent din ruta
         this.routeSub = this.route.params.subscribe(params => {
             this.contestId = params['id']
           });
@@ -50,11 +51,17 @@ export class AddCompetitorComponent implements OnInit {
         this.fetchCompetitors()
         // cand s-au terminat de pus concurentii
         if(this.competitors.length == this.contest.total_competitors_number-1){
+            competitor.contest = this.contestId
+            competitor.flag = '0';
+            this.firebaseService.addCompetitor(competitor)
+            this.competitors.push(competitor)
             this.contest.competitors = this.competitors
             this.firebaseService.updateContest(this.contestId, this.contest)
             this.router.navigate(['/home']);
+            return;
         }
         competitor.contest = this.contestId
+        competitor.flag = '0';
         this.firebaseService.addCompetitor(competitor)
     }
 
