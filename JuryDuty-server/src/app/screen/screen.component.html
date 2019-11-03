@@ -1,6 +1,21 @@
-<h1>2013 NCAA Tournament - Midwest Bracket</h1>
+<h1>{{contest.contest_name}}</h1>
 <main id="tournament">
-    <ul class="round round-1">
+
+  <ul *ngFor="let round of contest.rounds" class="round round-{{round.roundNr}}">
+    Round {{round.roundNr}}
+
+    <li class="spacer">&nbsp;</li>
+
+    <ul *ngFor="let series of round.series" class="round round-{{round.roundNr}}">
+      <li *ngFor="let competitor of series.competitors">
+        {{competitor.name}} <span *ngIf="competitor.notes.medie != '0'">{{competitor.notes.medie}}</span>
+      </li>
+
+      <li class="spacer">&nbsp;</li>
+    </ul>
+  </ul>
+
+    <!--<ul class="round round-1">
         <li class="spacer">&nbsp;</li>
         
         <li class="game game-top winner">Lousville <span>79</span></li>
@@ -101,5 +116,5 @@
         <li class="game game-bottom ">Duke <span>63</span></li>
         
         <li class="spacer">&nbsp;</li>
-    </ul>       
+    </ul>-->       
 </main>

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Contest, Competitor, NotesCateg, Round, Serie } from '../models';
+import { Contest, Competitor, NotesCateg, Round, Serie, NoteConcurentiRunda } from '../models';
 import { FirebaseService } from '../services/firebase.service';
 import { Router } from '@angular/router';
 import { config } from '../config';
@@ -29,7 +29,7 @@ export class HomeComponent implements OnInit {
     private router: Router,
     private db: AngularFirestore
   ) {
-    this.disabled = true;
+    this.disabled = false;
     this.emptyTable = true;
     this.rounds = null;
   }
@@ -41,11 +41,7 @@ export class HomeComponent implements OnInit {
       this.contests = actionArray.map(item => { return item as Contest });
       this.contest = this.contests[0];
       this.emptyTable = false;
-    });
-
-    if (this.contest.done == true) {
-      this.disabled = false;
-    }
+    }); 
   }
 
   getContest() {
@@ -124,8 +120,10 @@ export class HomeComponent implements OnInit {
       var competitors = this.competitors.splice(0, parseInt(this.contest.competitors_number_per_serie));
 
       competitors.forEach(function (c) {
-        c.notes = new Array<NotesCateg>();
-        console.log(c);
+        c.noteConcurentRunda = <NoteConcurentiRunda>{};
+        c.noteConcurentRunda.medie = '0';
+        c.noteConcurentRunda.noteRunda = new Array<NotesCateg>();
+
         newSeries.competitors.push(c);
       });
 

@@ -45,10 +45,10 @@ export interface Runda {
   roundNr: string
 }
 
-// export interface NoteConcurentiRunda{
-//   noteRunda: Array<NotesCateg>,
-//   medie: string
-// }
+ export interface NoteConcurentiRunda{
+   noteRunda: Array<NotesCateg>,
+   medie: string
+}
 
 // export interface Competitor{
 //   name: string,
@@ -65,7 +65,7 @@ export interface NotesCateg {
 export interface Competitor {
   name: string,
   contest: string,
-  notes: Array<NotesCateg>,
+  noteConcurentRunda: NoteConcurentiRunda,
   flag: string
 }
 
