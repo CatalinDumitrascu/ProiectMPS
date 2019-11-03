@@ -2,14 +2,16 @@
 import * as React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Picker } from 'react-native';
 import { NavigationScreenProp } from "react-navigation";
-import {fire_base, data_base} from '../res/Firebase'
+import {fire_store} from '../res/Firebase'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect } from 'react-redux'
-import {login} from '../res/actions'
+import {login, setCategories} from '../res/actions'
+
 
 const mapStateToProps = (state: any) => {
 	return {
-        event: state.reducer.event
+        event: state.reducer.event,
+        contestants: state.reducer.contestants
 	}
 }
 
@@ -18,13 +20,21 @@ const mapDispatchToProps = (dispatch: any) => ({
         dispatch (
             login(username)
         )
-    }
+    },
+    onSetCategory(categories: any) {
+        dispatch (
+            setCategories(categories)
+        )
+    },
+  
 })
 
 interface Props {
     navigation: NavigationScreenProp<any>; 
-    event: any
+    event: any,
+    contestants: any
     onLogin(username: string): void
+    onSetCategory(categories: any): void
 }
   
 interface State {
@@ -35,7 +45,7 @@ interface State {
     end_serries:boolean,
     error_message: string,
     found_error: boolean,
-    series_num: any
+    series_num: any,
 }
 
 class JurySetup extends React.Component<Props, State> {
@@ -50,17 +60,31 @@ class JurySetup extends React.Component<Props, State> {
             start_series: false,
             end_serries: false,
             found_error: false,
-            series_num: 0
+            series_num: 0,
         }
     }
 
-    componentDidMount(){
+    async componentDidMount(){
         this.props.onLogin(this.state.user_name)
-
+        console.log("JurySetup")
+        console.log(this.props.event)
         // There is an event, so a round can be started
         if (this.props.event != undefined) {
             this.setState({start_round: true})
+            this.props.onSetCategory(this.props.event[0][1].contest_categs)
+
+            if (this.props.event[0][1].connected_juries_num == undefined) {
+                this.props.event[0][1].connected_juries_num = 1
+            } else {
+                this.props.event[0][1].connected_juries_num += 1
+            }
+
+            // Add jury
+            await fire_store.collection("contests").doc(this.props.event[0][0])
+                .update(this.props.event[0][1])
+                
         }
+        
     }
 
     renderHeader() {
@@ -92,13 +116,13 @@ class JurySetup extends React.Component<Props, State> {
     }
 
 
-    startSeries(){
+    startVoting(){
         // Cant start if start_round is false
         if(!this.state.start_round) {
             this.setState({found_error: true, error_message: "Round hasnt started"})
         } else {
             console.log("Can start series")
-            this.props.navigation.navigate("UsersList", {num: this.state.series_num})
+            this.props.navigation.navigate("Rounds")
         }
     }
 
@@ -106,54 +130,34 @@ class JurySetup extends React.Component<Props, State> {
     rederJuryOptions(){
         return (
             <ScrollView style = {{margin: 20, alignContent: 'center'}}>
-                {/* Start round button */}
-                <TouchableOpacity 
-                    onPress = {() => this.startRound()}
-                    style = {{margin: 10, backgroundColor: this.state.start_round ? 'white' : 'red',
-                             borderRadius: 20, alignSelf: 'center'}}>
-                    <Text
-                        style = {{padding: 20}}>
-                        START ROUND
-                    </Text>
-                </TouchableOpacity>
                 {/* Type of contest */}
                 <Text
                     style = {{margin: 10, fontSize: 20}}>
-                    Event type: </Text>
-                <Text style = {{fontSize: 20, margin: 10}}>
-                    Choose a category to vote</Text>
-                <Picker
-                        selectedValue={"NONE"}
-                        style={{height: 50, width: 200, margin: 10}}
-                        onValueChange={(itemValue, itemIndex) =>
-                            console.log("picker")
-                        }>
-                        <Picker.Item label="Dance" value="dance" />
-                </Picker>
-                
-                {/* Start series */}
+                    Event name: {this.props.event[0][1].contest_name}</Text>
+                <Text
+                    style = {{margin: 10, fontSize: 20}}>
+                    Event type: {this.props.event[0][1].contest_type}</Text>
+                <Text
+                    style = {{margin: 10, fontSize: 20}}>
+                    Numbers of contestants: {this.props.event[0][1].competitors.length}</Text>
+                <Text
+                    style = {{margin: 10, fontSize: 20}}>
+                    Number of rounds: {this.props.event[0][1].rounds_number}</Text>
+              
+                <Text style = {{fontSize: 20, margin: 10, fontWeight: 'bold'}}>
+                    Categories to vote:</Text>
+               <View style = {{justifyContent: 'center'}}>
+                    <Text style = {{margin: 10, fontSize: 20}}>{this.props.event[0][1].contest_categs[0].name}</Text>
+                    <Text style = {{margin: 10, fontSize: 20}}>{this.props.event[0][1].contest_categs[1].name}</Text>
+                    <Text style = {{margin: 10, fontSize: 20}}>{this.props.event[0][1].contest_categs[2].name}</Text>
+               </View>
+                {/* Start voting */}
                 <TouchableOpacity 
-                    onPress = {() => this.startSeries()}
-                    style = {{margin: 10, backgroundColor: 'white', borderRadius: 20, alignSelf: 'center'}}>
+                    onPress = {() => this.startVoting()}
+                    style = {{margin: 10, marginVertical: 20, backgroundColor: 'white', borderRadius: 20, alignSelf: 'center'}}>
                     <Text
                         style = {{padding: 20}}>
-                        START SERIES
-                    </Text>
-                </TouchableOpacity>
-                {/* End series */}
-                <TouchableOpacity 
-                    style = {{margin: 10, backgroundColor: 'white', borderRadius: 20, alignSelf: 'center'}}>
-                    <Text
-                        style = {{padding: 20, paddingHorizontal: 25}}>
-                        END SERIES
-                    </Text>
-                </TouchableOpacity>
-                {/* End round button */}
-                <TouchableOpacity 
-                    style = {{margin: 10, backgroundColor: 'white', borderRadius: 20, alignSelf: 'center'}}>
-                    <Text
-                        style = {{padding: 20}}>
-                        END ROUND
+                        START VOTING
                     </Text>
                 </TouchableOpacity>
             </ScrollView>
@@ -173,10 +177,16 @@ class JurySetup extends React.Component<Props, State> {
         return (
            <View style = {{flex: 1,  backgroundColor: '#fff8dc'}}>   
                {this.renderHeader()}
-               {this.rederJuryOptions()}
-               {this.state.found_error
-                ? this.showErrorMessage()
-                : <View></View>}
+               {this.state.start_round 
+                ? <View>
+                {this.rederJuryOptions()}
+                    {this.state.found_error
+                    ? this.showErrorMessage()
+                    : <View></View>}
+                </View>
+                :<Text>No contest going on</Text>
+            }
+               
            </View>
         )
     }

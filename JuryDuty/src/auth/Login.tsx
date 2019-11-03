@@ -5,10 +5,10 @@
 import * as React from 'react';
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { NavigationScreenProp } from "react-navigation";
-import {fire_base, data_base} from '../res/Firebase'
+import {fire_base} from '../res/Firebase'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect } from 'react-redux'
-import {login} from '../res/actions'
+import {login, getContestants} from '../res/actions'
 
 // TODO
 // check first if there is an event going on
@@ -18,7 +18,7 @@ import {login} from '../res/actions'
 
 const mapStateToProps = (state: any) => {
 	return {
-       
+       event: state.reducer.event
 	}
 }
 
@@ -27,12 +27,14 @@ const mapDispatchToProps = (dispatch: any) => ({
         dispatch (
             login(username)
         )
-    }
+    },
+   
 })
 
 interface Props {
     navigation: NavigationScreenProp<any>; 
     onLogin(username: string): void
+    event: any
 }
   
 interface State {
@@ -54,6 +56,12 @@ class Login extends React.Component<Props, State> {
             error_message: "",
             found_error: false,
         }
+    }
+
+    componentDidMount() {
+
+        // Get contestants
+        
     }
 
     renderHeader() {
@@ -171,7 +179,7 @@ class Login extends React.Component<Props, State> {
         }
     }
 
-      showErrorMessage() {
+    showErrorMessage() {
         return (
             <View style = {{position: 'absolute', bottom: 0, width: '100%',
                             backgroundColor: '#800000'}}> 

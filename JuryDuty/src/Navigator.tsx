@@ -7,7 +7,8 @@ import Splash from './auth/Splash'
 import HomeScreen from './auth/HomeScreen'
 import Login from './auth/Login'
 import JurySetup from './auth/JurySetup'
-import UsersList from './main/UsersList'
+import Rounds from './main/Rounds'
+import VotingScreen from './main/VotingScreen'
 
 const Navigator = createStackNavigator(
     {
@@ -15,7 +16,8 @@ const Navigator = createStackNavigator(
         HomeScreen: HomeScreen,
         Login: Login, 
         JurySetup: JurySetup,
-        UsersList: UsersList
+        Rounds: Rounds,
+        VotingScreen: VotingScreen
     },
     {
       initialRouteName: "Splash",     

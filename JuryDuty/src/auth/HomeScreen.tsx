@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { NavigationScreenProp } from "react-navigation";
-import {fire_base, data_base} from '../res/Firebase'
+import {fire_base} from '../res/Firebase'
 
 interface Props {
     navigation: NavigationScreenProp<any>; 
@@ -18,19 +18,6 @@ class HomeScreen extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
     }
-
-    /**
-     // Check if there is an account created for this user
-    async checkAuth() {
-        let parent = this
-        console.log("Checking for user")
-        await fire_base.auth().onAuthStateChanged(function(user) {
-            user 
-            ? parent.props.navigation.navigate('')
-            : parent.props.navigation.navigate('')
-          });
-    }
-     */
 
     render() {
         return (
