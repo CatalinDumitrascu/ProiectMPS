@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Contest, Competitor, NotesCateg } from '../models';
+import { Contest, Competitor, NotesCateg, Round, Serie } from '../models';
 import { FirebaseService } from '../services/firebase.service';
 import { Router } from '@angular/router';
 import { config } from '../config';
@@ -14,10 +14,10 @@ import { ContestSetupComponent } from '../contest-setup/contest-setup.component'
 export class HomeComponent implements OnInit {
 
   contests: Contest[];
-  contest = null;
+  contest: Contest;
   disabled: Boolean;
   emptyTable: Boolean;
-  competitors = [];
+  competitors: Competitor[];
   series = [];
   contest_series = [];
   rounds = null;
@@ -35,7 +35,7 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.contest = { done: false, key: "" };
+    this.contest = <Contest>{ done: false, key: "" };
 
     this.firebaseService.getContestsAsync().subscribe(actionArray => {
       this.contests = actionArray.map(item => { return item as Contest });
@@ -64,7 +64,7 @@ export class HomeComponent implements OnInit {
         console.log(this.competitors)
         this.firebaseService.getCompetitors(this.contest.key)
           .subscribe(result => {
-            this.competitors = result.map(it => it.payload.doc.data())
+            this.competitors = result.map(it => it.payload.doc.data() as Competitor)
             console.log(this.competitors)
           });
       });
@@ -90,31 +90,49 @@ export class HomeComponent implements OnInit {
     return array;
   }
 
-  manageRounds() {
-    this.series = [];
-    this.contest_series = []
-    this.contest.rounds = [];
-    this.competitors = this.shuffle(this.competitors)
-    this.contest.roundNr = 0;
-    var size = 2;
-    while (this.competitors.length > 0)
-      this.series.push(this.competitors.splice(0, size));
-    // pun in alt array pt firebase
-    for (let i = 0; i < this.series.length; i++) {
-      // this.series[i][0].notes = [
-      //   {categ: 'Tehnica', note: '10', weight: '1/3'},
-      //   {categ: 'Coregrafie', note: '10', weight: '1/3'},
-      //   {categ: 'Impresie Ansamblu', note: '10', weight: '1/3'}
-      // ]
-      // this.series[i][1].notes = [
-      //   {categ: 'Tehnica', note: '10', weight: '1/3'},
-      //   {categ: 'Coregrafie', note: '9', weight: '1/3'},
-      //   {categ: 'Impresie Ansamblu', note: '8', weight: '1/3'}
-      // ]
-      // this.contest_series.push({serieNr: i, serie: this.series[i]})
+  manageFirstRound() {
+    this.contest.rounds = new Array<Round>();
+
+    switch (this.contest.contest_type) {
+      case 'Battle': {
+        this.contest.competitors_number_per_serie = '2';
+        break;
+      }
+      case 'Evolutie sincrona': {
+        this.contest.competitors_number_per_serie = '1';
+        break;
+      }
+      default: {
+        break;
+      }
     }
-    this.contest.rounds.push({ roundNr: '0', round: this.contest_series });
-    console.log(this.contest.rounds)
+
+    var numberOfSeries = parseInt(this.contest.total_competitors_number) / parseInt(this.contest.competitors_number_per_serie);
+
+    var newRound = <Round>{};
+    newRound.roundNr = '1';
+    newRound.series = new Array<Serie>();
+
+    this.competitors = new Array<Competitor>();
+    this.competitors = this.contest.competitors.concat();
+
+    for (let i = 0; i < numberOfSeries; i++) {
+      var newSeries = <Serie>{};
+      newSeries.competitors = new Array<Competitor>();
+      newSeries.serieNr = (i + 1).toString();
+
+      var competitors = this.competitors.splice(0, parseInt(this.contest.competitors_number_per_serie));
+
+      competitors.forEach(function (c) {
+        c.notes = new Array<NotesCateg>();
+        console.log(c);
+        newSeries.competitors.push(c);
+      });
+
+      newRound.series.push(newSeries);
+    }
+
+    this.contest.rounds.push(newRound);
     this.firebaseService.updateContest(this.contest.key, this.contest)
   }
 
