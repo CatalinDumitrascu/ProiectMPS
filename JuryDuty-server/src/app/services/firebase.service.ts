@@ -19,40 +19,44 @@ export class FirebaseService {
   constructor(
     private http: HttpClient,
     private db: AngularFirestore
-    ) {
-      this.contests = db.collection<Contest>(config.collection_endpoint);
-      this.competitors = db.collection<Competitor>(config.competitors);
-     }
+  ) {
+    this.contests = db.collection<Contest>(config.collection_endpoint);
+    this.competitors = db.collection<Competitor>(config.competitors);
+  }
 
-  addContest(contest: Contest){
+  addContest(contest: Contest) {
     return this.contests.add(contest);
   }
 
-  getContests(){
+  getContests() {
     return new Promise<any>((resolve, reject) => {
       this.contests.snapshotChanges()
-      .subscribe(snapshots => {
-        resolve(snapshots)
-      })
+        .subscribe(snapshots => {
+          resolve(snapshots)
+        })
     })
   }
 
-  addCompetitor(competitor){
+  getContestsAsync() {
+    return this.contests.valueChanges();
+  }
+
+  addCompetitor(competitor) {
     return this.competitors.add(competitor)
   }
 
-  getCompetitors(contestId: string){
+  getCompetitors(contestId: string) {
     return this.db.collection(config.competitors, ref => ref.where('contest', '==', contestId))
-    .snapshotChanges()
+      .snapshotChanges()
   }
-  
-  updateContest(id: string, contest: Contest){
+
+  updateContest(id: string, contest: Contest) {
     // get contestDoc
     this.contestDoc = this.db.doc<Contest>(`${config.collection_endpoint}/${id}`);
     this.contestDoc.update(contest);
   }
 
-  deleteContest(id: string){
+  deleteContest(id: string) {
     // get contestDoc
     this.contestDoc = this.db.doc<Contest>(`${config.collection_endpoint}/${id}`);
     // delete the document

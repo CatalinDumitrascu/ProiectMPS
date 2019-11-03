@@ -28,24 +28,29 @@ export class HomeComponent implements OnInit {
     public firebaseService: FirebaseService,
     private router: Router,
     private db: AngularFirestore
-  ) { 
+  ) {
     this.disabled = true;
     this.emptyTable = true;
     this.rounds = null;
   }
 
   ngOnInit() {
-    this.contest = {done: false, key: ""};
-    this.getContest()
-    if(this.contest.done == true){
+    this.contest = { done: false, key: "" };
+
+    this.firebaseService.getContestsAsync().subscribe(actionArray => {
+      this.contests = actionArray.map(item => { return item as Contest });
+      this.contest = this.contests[0];
+      this.emptyTable = false;
+    });
+
+    if (this.contest.done == true) {
       this.disabled = false;
     }
   }
 
-  getContest(){
+  getContest() {
     this.firebaseService.getContests()
-    .then(result => 
-      {
+      .then(result => {
         this.contest = result.filter(x => x.payload.doc.data().done == false)[0].payload.doc.data()
         this.emptyTable = false;
         // for(let i = 0; i < this.contest.rounds.length; i++){
@@ -56,20 +61,18 @@ export class HomeComponent implements OnInit {
         //   }
         // }
 
-        // console.log(this.competitors)
+        console.log(this.competitors)
         this.firebaseService.getCompetitors(this.contest.key)
-        .subscribe( result => {
-          this.competitors = result.map(it => it.payload.doc.data())
-          console.log(this.competitors)
-        })
-        
-      }
-    )
+          .subscribe(result => {
+            this.competitors = result.map(it => it.payload.doc.data())
+            console.log(this.competitors)
+          });
+      });
   }
 
-  calculateAverageNote(notes: Array<NotesCateg>){
+  calculateAverageNote(notes: Array<NotesCateg>) {
     var sum_avg = 0;
-    for(let i = 0; i < notes.length; i++){
+    for (let i = 0; i < notes.length; i++) {
       sum_avg += parseInt(notes[i].note, 10) * parseFloat(notes[i].weight);
     }
     return sum_avg;
@@ -87,7 +90,7 @@ export class HomeComponent implements OnInit {
     return array;
   }
 
-  manageRounds(){
+  manageRounds() {
     this.series = [];
     this.contest_series = []
     this.contest.rounds = [];
@@ -95,9 +98,9 @@ export class HomeComponent implements OnInit {
     this.contest.roundNr = 0;
     var size = 2;
     while (this.competitors.length > 0)
-        this.series.push(this.competitors.splice(0, size));
+      this.series.push(this.competitors.splice(0, size));
     // pun in alt array pt firebase
-    for(let i = 0; i < this.series.length; i++){
+    for (let i = 0; i < this.series.length; i++) {
       // this.series[i][0].notes = [
       //   {categ: 'Tehnica', note: '10', weight: '1/3'},
       //   {categ: 'Coregrafie', note: '10', weight: '1/3'},
@@ -110,12 +113,12 @@ export class HomeComponent implements OnInit {
       // ]
       // this.contest_series.push({serieNr: i, serie: this.series[i]})
     }
-    this.contest.rounds.push({roundNr: '0', round: this.contest_series});
+    this.contest.rounds.push({ roundNr: '0', round: this.contest_series });
     console.log(this.contest.rounds)
     this.firebaseService.updateContest(this.contest.key, this.contest)
   }
 
-  getWinners(){
+  getWinners() {
   }
 
 }
