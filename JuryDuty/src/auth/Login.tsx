@@ -3,7 +3,8 @@
 // Jury - username and password
 
 import * as React from 'react';
-import { View, Text, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Platform } from 'react-native';
+
 import { NavigationScreenProp } from "react-navigation";
 import {fire_base} from '../res/Firebase'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -66,7 +67,10 @@ class Login extends React.Component<Props, State> {
 
     renderHeader() {
         return (
-            <View style = {{flexDirection: 'row', marginBottom: 20, padding: 10, justifyContent: 'space-between' ,backgroundColor: '#b8860b'}}>
+            <View style = {{flexDirection: 'row', marginBottom: 20, 
+                            padding: 10, justifyContent: 'space-between',
+                            backgroundColor: '#b8860b',
+                            paddingTop: Platform.OS === 'ios' ? 40 : 10}}>
                 <TouchableOpacity
                     onPress = {() => this.props.navigation.goBack()}>
                     <Icon name="arrow-left" size={30} color="white" />

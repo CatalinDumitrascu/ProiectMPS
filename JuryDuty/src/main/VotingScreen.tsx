@@ -1,6 +1,6 @@
 // Setup page for admin
 import * as React from 'react';
-import { View, Text, TouchableOpacity, Alert ,FlatList} from 'react-native';
+import { View, Text, TouchableOpacity, Alert ,FlatList, Platform} from 'react-native';
 import { NavigationScreenProp } from "react-navigation";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect } from 'react-redux'
@@ -61,7 +61,8 @@ class VotingScreen extends React.Component<Props, State> {
     renderHeader() {
         return (
             <View style = {{flexDirection: 'row', marginBottom: 20, padding: 10, justifyContent: 'space-between',
-                        backgroundColor: '#b8860b'}}>
+                        backgroundColor: '#b8860b',
+                        paddingTop: Platform.OS === 'ios' ? 40 : 10}}>
                  <TouchableOpacity
                     onPress = {() => this.props.navigation.goBack()}>
                     <Icon name="arrow-left" size={30} color="white" />
