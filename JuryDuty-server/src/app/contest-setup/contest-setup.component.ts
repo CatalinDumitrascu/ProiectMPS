@@ -66,6 +66,8 @@ export class ContestSetupComponent implements OnInit {
     contest.contest_categs = this.contest_categs[contest.contest_name_id].categories
     contest.contest_name = this.contest_names[contest.contest_name_id].name
     contest.done = false;
+    contest.current_round_number = '0';
+    contest.current_series_number = '0';
     return this.firebaseService.addContest(contest)
     .then(
       res => {

@@ -28,6 +28,10 @@ export class FirebaseService {
     return this.contests.add(contest);
   }
 
+  getContestsAsync() {
+    return this.contests.valueChanges();
+  }
+
   getContests(){
     return new Promise<any>((resolve, reject) => {
       this.contests.snapshotChanges()
@@ -42,14 +46,31 @@ export class FirebaseService {
   }
 
   getCompetitors(contestId: string){
-    return this.db.collection(config.competitors, ref => ref.where('contest', '==', contestId))
+    return this.db.collection(config.competitors, ref => ref.where('contest', '==', contestId)
+    .where('flag', '==', '0'))    // sunt inca in concurs
     .snapshotChanges()
   }
   
+  getCompetitorsAsync(){
+    return this.db.collection(config.competitors, ref => ref.where('flag', '==', '0'))    // sunt inca in concurs
+    .valueChanges()
+  }
+
+  eliminateCompetitor(id:string){
+    let competitorDoc = this.db.doc<Competitor>(`${config.competitors}/${id}`);
+    competitorDoc.update({flag: "1"});
+  }
+
+  updateCompetitor(id: string, competitor: Competitor){
+    // get contestDoc
+    let competitorDoc = this.db.doc<Competitor>(`${config.competitors}/${id}`);
+    competitorDoc.set(competitor);
+  }
+
   updateContest(id: string, contest: Contest){
     // get contestDoc
     this.contestDoc = this.db.doc<Contest>(`${config.collection_endpoint}/${id}`);
-    this.contestDoc.update(contest);
+    this.contestDoc.set(contest);
   }
 
   deleteContest(id: string){
@@ -58,4 +79,5 @@ export class FirebaseService {
     // delete the document
     this.contestDoc.delete();
   }
+
 }
