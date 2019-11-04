@@ -1,11 +1,11 @@
 // Setup page for admin
 import * as React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Platform, Alert, ActivityIndicator } from 'react-native';
 import { NavigationScreenProp } from "react-navigation";
-import {fire_store} from '../res/Firebase'
+import {fire_store, fire_base} from '../res/Firebase'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect } from 'react-redux'
-import {login, setCategories} from '../res/actions'
+import {login, setCategories, getEvent, setRound} from '../res/actions'
 
 
 const mapStateToProps = (state: any) => {
@@ -26,6 +26,16 @@ const mapDispatchToProps = (dispatch: any) => ({
             setCategories(categories)
         )
     },
+    onCheck() {
+        dispatch (
+            getEvent()
+        )
+    },
+    onSetRound(round: any) {
+        dispatch (
+            setRound(round)
+        )
+    },
   
 })
 
@@ -35,17 +45,18 @@ interface Props {
     contestants: any
     onLogin(username: string): void
     onSetCategory(categories: any): void
+    onCheck(): void
+    onSetRound(round: any): void
 }
   
 interface State {
     user_name: string,
     start_round: boolean,
     end_round: boolean,
-    start_series:boolean,
-    end_serries:boolean,
     error_message: string,
     found_error: boolean,
     series_num: any,
+    loading: boolean;
 }
 
 class JurySetup extends React.Component<Props, State> {
@@ -57,10 +68,9 @@ class JurySetup extends React.Component<Props, State> {
             start_round: false,
             end_round: false,
             error_message: "",
-            start_series: false,
-            end_serries: false,
             found_error: false,
             series_num: 0,
+            loading:false
         }
     }
 
@@ -98,11 +108,25 @@ class JurySetup extends React.Component<Props, State> {
                     <Icon name="arrow-left" size={30} color="white" />
                 </TouchableOpacity>
                 <Text style = {{color: 'white', fontSize: 20}}>
-                    Jury setup - connected as {this.state.user_name}
+                    Connected as {this.state.user_name}
                 </Text>     
-                <TouchableOpacity></TouchableOpacity>
+                <TouchableOpacity
+                    onPress = {() => this.refresh()}>
+                    <Icon name="refresh" size={30} color="white" ></Icon>
+                </TouchableOpacity>
             </View>
         )
+    }
+
+    async refresh(){
+        this.setState({loading: true})
+        await this.props.onCheck()
+
+        setTimeout(() => 
+   
+        (this.props.onSetRound(this.props.event[0][1].current_round_number),
+        this.setState({loading: false}) ) ,
+         3000)
     }
 
     // Try starting round
@@ -161,8 +185,33 @@ class JurySetup extends React.Component<Props, State> {
                         START VOTING
                     </Text>
                 </TouchableOpacity>
+                <TouchableOpacity
+                    style = {{alignSelf: 'flex-end', backgroundColor: '#8b4513', borderRadius: 20, }}
+                     onPress = {() => this.signOut()}>
+                         <Text style = {{color: 'white', padding: 10}}>Sign Out</Text>
+                </TouchableOpacity>
             </ScrollView>
         )
+    }
+
+    signOut(){
+
+        fire_base.auth().signOut().then(function() {
+            Alert.alert(
+                'Signed out succesfully',
+                "You signed out of JuryDuty app",
+                [{
+                    text: 'Close',
+                    onPress: () => console.log('Close Pressed'),
+                },
+                {text: 'OK', onPress: () => console.log("Ok pressed")},
+                ],
+                {cancelable: true},
+            );
+          }, function(error) {
+            // An error happened.
+          });
+          this.props.navigation.goBack()
     }
    
     showErrorMessage() {
@@ -177,17 +226,21 @@ class JurySetup extends React.Component<Props, State> {
     render() {
         return (
            <View style = {{flex: 1,  backgroundColor: '#fff8dc'}}>   
-               {this.renderHeader()}
-               {this.state.start_round 
-                ? <View>
-                {this.rederJuryOptions()}
-                    {this.state.found_error
-                    ? this.showErrorMessage()
-                    : <View></View>}
+            {this.state.loading
+                ? <ActivityIndicator style = {{flex:1}} size="large" color="#0000ff" />
+                : <View>
+                {this.renderHeader()}
+                {this.state.start_round 
+                    ? <View>
+                    {this.rederJuryOptions()}
+                        {this.state.found_error
+                        ? this.showErrorMessage()
+                        : <View></View>}
+                    </View>
+                    :<Text>No contest going on</Text>
+                }
                 </View>
-                :<Text>No contest going on</Text>
-            }
-               
+            }  
            </View>
         )
     }

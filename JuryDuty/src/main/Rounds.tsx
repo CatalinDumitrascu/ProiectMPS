@@ -1,10 +1,10 @@
 // Setup page for admin
 import * as React from 'react';
-import { View, Text, TouchableOpacity, FlatList, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, Platform, ActivityIndicator } from 'react-native';
 import { NavigationScreenProp } from "react-navigation";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect } from 'react-redux'
-import {setRound} from '../res/actions'
+import {setRound, getEvent} from '../res/actions'
 import {fire_store} from '../res/Firebase'
 
 const mapStateToProps = (state: any) => {
@@ -19,19 +19,27 @@ const mapDispatchToProps = (dispatch: any) => ({
             setRound(round)
         )
     },
+    onCheck() {
+        dispatch (
+            getEvent()
+        )
+    }
 })
 
 interface Props {
     navigation: NavigationScreenProp<any>; 
     event: any,
     onSetRound(round: any): void
+    onCheck(): void
 }
   
 interface State {
     error_message: string,
     found_error: boolean,
     round_num: any, 
-    disable_button: boolean
+    disable_button: boolean,
+    current_series: any,
+    loading: boolean
 }
 
 class Rounds extends React.Component<Props, State> {
@@ -42,15 +50,19 @@ class Rounds extends React.Component<Props, State> {
             error_message: "",
             found_error: false,
             round_num: 0,
-            disable_button: false
+            disable_button: false,
+            current_series: "",
+            loading: false
         }
     }
 
     componentDidMount() {
         // TODO change this
-        let num = this.props.event[0][1].current_round_number - 1
+        let num = this.props.event[0][1].current_round_number 
         this.setState({round_num: num})
         this.props.onSetRound(num)
+
+        this.setState({current_series : this.props.event[0][1].current_series_number});
     }
 
     renderHeader() {
@@ -66,9 +78,26 @@ class Rounds extends React.Component<Props, State> {
                 <Text style = {{color: 'white', fontSize: 20}}>
                     Series for round {this.state.round_num}
                 </Text>     
-                <TouchableOpacity></TouchableOpacity>
+                <TouchableOpacity
+                    onPress = {() => this.refresh()}>
+                    <Icon name="refresh" size={30} color="white" ></Icon>
+                </TouchableOpacity>
             </View>
         )
+    }
+
+    async refresh(){
+        this.setState({loading: true})
+        await this.props.onCheck()
+
+        setTimeout(() => 
+   
+        (this.props.onSetRound(this.props.event[0][1].current_round_number),
+        this.setState({loading: false}),
+        this.setState({round_num: this.props.event[0][1].current_round_number}),
+        this.setState({current_series : this.props.event[0][1].current_series_number}),
+        this.props.onSetRound(this.props.event[0][1].current_round_number) ) ,
+         3000)
     }
 
     showErrorMessage() {
@@ -86,15 +115,16 @@ class Rounds extends React.Component<Props, State> {
             <FlatList
 			    data = {this.props.event[0][1].rounds[this.state.round_num].round}
 				extraData = {this.props}
-				renderItem = {this.renderRound}
+				renderItem = {this.renderSeries}
 				keyExtractor = {(item: any, index: number) => index.toString()}/> 
 
         )
     }
 
 
-    renderRound = ({item, index}: any) => (     
+    renderSeries= ({item, index}: any) => (     
         <TouchableOpacity
+            disabled = {this.state.current_series === index ? false : true}
             onPress = {() => this.props.navigation.navigate("VotingScreen", {id: item.serieNr})}
             style = {{margin: 10, alignSelf: 'center', borderRadius: 20, 
                     borderWidth: 1, borderColor:'#8b4513', backgroundColor: '#fffaf0'}}>
@@ -132,13 +162,17 @@ class Rounds extends React.Component<Props, State> {
 
     render() {
         return (
-           <View style = {{flex: 1,  backgroundColor: '#fff8dc'}}>   
-               {this.renderHeader()}
-               {this.showRounds()}
-               {this.finishButton()}
-               {this.state.found_error
-                ? this.showErrorMessage()
-                : <View></View>}
+           <View style = {{flex: 1,  backgroundColor: '#fff8dc'}}>  
+            {this.state.loading
+                ? <ActivityIndicator style = {{flex:1}} size="large" color="#0000ff" />
+                : <View>
+                    {this.renderHeader()}
+                    {this.showRounds()}
+                    {this.finishButton()}
+                    {this.state.found_error
+                        ? this.showErrorMessage()
+                        : <View></View>}
+                </View>}
            </View>
         )
     }

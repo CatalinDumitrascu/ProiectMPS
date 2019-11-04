@@ -78,10 +78,13 @@ class Login extends React.Component<Props, State> {
                 <Text style = {{color: 'white', fontSize: 20}}>
                     Jury authentication
                 </Text>     
-                <TouchableOpacity></TouchableOpacity>
+                <TouchableOpacity>
+                </TouchableOpacity>
             </View>
         )
     }
+
+   
 
 
     renderUserNameInput(){
