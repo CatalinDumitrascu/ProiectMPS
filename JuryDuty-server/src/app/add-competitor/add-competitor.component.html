@@ -1,7 +1,8 @@
-<div class="container">
+<body>
+    <div class="container">
         <div class="row">
-          <div class="col-xs-12 col-md-6 col-md-offset-3">
-            <h2>Add competitor</h2>
+          <div id="content" class="col-xs-12 col-md-6 col-md-offset-3">
+            <h2 id="title">Adaugă un competitor</h2>
             <br><br>
             <form #addCompetitorForm="ngForm" (ngSubmit)="onSubmit(addCompetitorForm.value);addCompetitorForm.reset()">
                 <div class="form-group">
@@ -41,3 +42,4 @@
           </div>
         </div>
     </div>
+</body>
