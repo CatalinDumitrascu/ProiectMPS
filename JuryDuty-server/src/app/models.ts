@@ -1,11 +1,11 @@
 export interface Serie{
   competitors: Array<Competitor>,
-  serieNr: string
+  serieNr: number
 }
 
 export interface Runda{
   series: Array<Serie>,
-  roundNr: string
+  roundNr: number
 }
 
 export interface NotaCategorie{
@@ -23,11 +23,12 @@ export interface Competitor {
     contest: string,
     notes: Array<NotaJuriu>,
     flag : string, // 0 - in concurs, 1 - eliminat, 2 - descalificat ?
-    key: string
+    key: string,
+    medie: string
   }
 
 export interface Serie {
-  serieNr : string
+  serieNr : number,
   serie: {
     0: Competitor,
     1: Competitor
@@ -35,7 +36,7 @@ export interface Serie {
 }
 
 export interface Round {
-  roundNr: string,
+  roundNr: number,
   round: Array<Serie>
 }
 
@@ -45,15 +46,15 @@ export interface Round {
     contest_name: string,
     contest_categs: Array<String>,
     contest_type: string,
-    total_competitors_number: string,
-    rounds_number: string,
-    competitors_number_per_serie: string,
-    competitors_eliminate: string,
+    total_competitors_number: number,
+    rounds_number: number,
+    competitors_number_per_serie: number,
+    competitors_eliminate: number,
     password: string,
     done: boolean,
     rounds: Array<Round>,
-    current_round_number: string,
-    current_series_number: string,
-    juries_votes_finish: string;
-    connected_juries_num: string
+    current_round_number: number,
+    current_series_number: number,
+    jury_stop_round: number;
+    connected_juries_num: number
   }

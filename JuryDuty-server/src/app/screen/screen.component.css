@@ -8,6 +8,7 @@ main{
   .round{
     display:flex;
     flex-direction:column;
+    font-weight:bold;
     justify-content:center;
     width:200px;
     list-style:none;
@@ -33,12 +34,12 @@ main{
   
   li.game{
     padding-left:20px;
-    color:red
+    color: black
   }
   
     li.game.winner{
       font-weight:bold;
-      color:green
+      color: green
     }
     li.game span{
       float:right;

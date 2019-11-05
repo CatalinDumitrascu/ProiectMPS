@@ -14,6 +14,20 @@
                     (click)="startRound()">
                     Start runda
                 </button>
+                <p>Numarul juratilor conectati: {{this.contest.connected_juries_num}}</p>
+                <p>Numarul juratilor care au votat: {{this.contest.jury_stop_round}}</p>
+                <button
+                    class="btn btn-lg btn-primary btn-block mb-1"
+                    type="button"
+                    (click)="refresh()">
+                    Refresh
+                </button>
+                <button
+                    class="btn btn-lg btn-primary btn-block mb-1"
+                    type="button"
+                    (click)="getWinners()">
+                    Stop runda
+                </button>
                 <br> <br>
                 <div *ngIf="emptyTable; else elseBlock">Nici un concurs curent</div>
                 <ng-template #elseBlock>

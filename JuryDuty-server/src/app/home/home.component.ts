@@ -6,6 +6,8 @@ import { config } from '../config';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { ContestSetupComponent } from '../contest-setup/contest-setup.component';
 import { Key } from 'protractor';
+import { debug } from 'util';
+import { runInThisContext } from 'vm';
 
 @Component({
   selector: 'app-home',
@@ -43,13 +45,15 @@ export class HomeComponent implements OnInit {
     this.firebaseService.getCompetitorsAsync().subscribe(actionArray => {
       this.competitors = actionArray.map(item => { return item as Competitor });
     });
-   
-
   }
-
+  
   ngOnInit() {
     this.contest = {done: false, key: ""};
     this.getContest()
+  }
+
+  refresh(){
+    window.location.reload();
   }
 
   deleteContest(){
@@ -66,6 +70,7 @@ export class HomeComponent implements OnInit {
       )
     }
   }
+
   getContest(){
     this.firebaseService.getContestsAsync().subscribe(actionArray => {
       this.contests = actionArray.map(item => { return item as Contest });
@@ -275,8 +280,11 @@ export class HomeComponent implements OnInit {
 
 
   getWinners(){
-    this.getContest();
-    if(this.contest.juries_votes_finish == this.contest.connected_juries_num){ // s-a terminat runda
+    //while(this.contest.jury_stop_round != this.contest.connected_juries_num){
+    //  this.getContest();
+    //}
+    if(this.contest.jury_stop_round == this.contest.connected_juries_num &&
+      this.contest.jury_stop_round > 0 && this.contest.connected_juries_num > 0){ // s-a terminat runda
       switch (this.contest.contest_type) {
         case 'Battle': {
           for(let i = 0; i < this.contest.rounds[this.contest.current_round_number].round.length; i++){ // seriile curente
@@ -314,6 +322,7 @@ export class HomeComponent implements OnInit {
         }
 
         case 'Evolutie sincrona': {
+          console.log(this.contest.rounds[this.contest.current_round_number].round);
           var competitors_number_eliminate = this.contest.competitors_eliminate;
           var series = this.contest.rounds[this.contest.current_round_number].round;
           // sort
@@ -346,18 +355,18 @@ export class HomeComponent implements OnInit {
 
       }
       this.contest.current_round_number++;
+      if(this.contest.current_round_number == this.contest.rounds_number){
+        this.contest.done = true;
+      }
       this.firebaseService.updateContest(this.contest.key, this.contest);
     }
   }
 
   startRound(){
     if(this.contest.current_round_number < this.contest.rounds_number){
-      this.manageRounds();
-      this.getWinners();
-    }
-    if(this.contest.current_round_number == this.contest.rounds_number){
-      this.contest.done = true;
+      this.contest.jury_stop_round = 0;
       this.firebaseService.updateContest(this.contest.key, this.contest);
+      this.manageRounds();
     }
   }
 

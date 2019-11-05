@@ -19,9 +19,9 @@ import { identifierModuleUrl } from '@angular/compiler';
 
 export class ContestSetupComponent implements OnInit {
   contest_types = [
-    {id: 0, name: 'Battle', competitors_number_per_serie: '2'},
-    {id: 1, name: 'Evolutie sincrona', competitors_number_per_serie: ''},
-    {id: 2, name: 'Evolutie asincrona', competitors_number_per_serie: '1'}
+    {id: 0, name: 'Battle'},
+    {id: 1, name: 'Evolutie sincrona'},
+    {id: 2, name: 'Evolutie asincrona'}
   ]
   contest_names = [
     {id: 0, name: 'Dans'},
@@ -36,8 +36,8 @@ export class ContestSetupComponent implements OnInit {
   categories = []
   currentContest = null
   contests: Observable<any[]>;
-  competitors_number_per_serie: string;
-  competitors_eliminate: string;
+  competitors_number_per_serie: number;
+  competitors_eliminate: number;
   disabled1: Boolean;
   disabled2: Boolean;
 
@@ -60,11 +60,12 @@ export class ContestSetupComponent implements OnInit {
     contest.contest_categs = this.contest_categs[contest.contest_name_id].categories
     contest.contest_name = this.contest_names[contest.contest_name_id].name
     contest.done = false;
-    contest.current_round_number = '0';
-    contest.current_series_number = '0';
+    contest.current_round_number = 0;
+    contest.current_series_number = 0;
     contest.competitors_number_per_serie = this.competitors_number_per_serie;
     contest.competitors_eliminate = this.competitors_eliminate;
-    contest.connected_juries_num = '2';
+    contest.connected_juries_num = 0;
+    contest.jury_stop_round = 0;
     return this.firebaseService.addContest(contest)
     .then(
       res => {
@@ -81,16 +82,16 @@ export class ContestSetupComponent implements OnInit {
 
   onOptionsSelected(contestTypeName){
     if(contestTypeName == 'Battle'){
-      this.competitors_number_per_serie = '2';
-      this.competitors_eliminate = '';
+      this.competitors_number_per_serie = 2;
+      this.competitors_eliminate = 1;
       this.disabled1 = true;
       this.disabled2 = true;
     } else if(contestTypeName == 'Evolutie asincrona'){
-      this.competitors_number_per_serie = '1';
+      this.competitors_number_per_serie = 1;
       this.disabled1 = true;
     } else {
-      this.competitors_number_per_serie = '';
-      this.competitors_eliminate = '';
+      this.competitors_number_per_serie = 0;
+      this.competitors_eliminate = 0;
       this.disabled1 = false;
       this.disabled2 = false;
     }
