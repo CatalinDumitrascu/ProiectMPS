@@ -1,1 +1,148 @@
-<p>edit-contest works!</p>
+<body>
+<div class="container">
+        <h2>Edit the contest</h2>
+        <br><br>
+        <div class="row">
+            <div class="col-xs-12 col-md-6 col-md-offset-3">
+            <form #postForm="ngForm" (ngSubmit)="onSubmit(postForm.value)">
+                <div class="form-group">
+                    <h5>Choose a contest</h5>
+                    <p>The current style of the competition: {{contest.contest_name}}</p>
+                    <select 
+                        name="contest_name_id" 
+                        id="contest_name_id" 
+                        class="form-control"
+                        [(ngModel)]="postForm.contest_name_id"
+                        (change)="onSelect($event.target.value)">
+                        <option *ngFor="let contest_name of contest_names" [value]="contest_name.id" >
+                            {{ contest_name.name }}
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <h5>The categories to be juried</h5>
+                    <p>Current categories:</p>
+                    <ul *ngFor="let categ of contest.contest_categs">
+                        <td class="table-cell">{{categ.name}}</td>
+                    </ul>
+                    <select
+                        name="contest_categs"
+                        id="contest_categs" 
+                        class="form-control"
+                        multiple="multiple"
+                        [(ngModel)]="postForm.contest_categs">
+                    <option *ngFor="let category of categories" value="category.name">
+                        {{category.name}}
+                    </option>
+                    </select>
+                    <br>
+                    <p>Add a new category to the current list:</p>
+                    <form id="edit_categ" #addForm="ngForm" (ngSubmit)="addNewCategory(addForm.value)">
+                        <input
+                        type="text"
+                        class="form-control"
+                        id="new_category"
+                        [(ngModel)]="addForm.new_category"
+                        name="new_category"
+                        />
+                        <button
+                            class="btn btn-primary"
+                            type="submit"
+                            [disabled]="!postForm.valid"
+                        >
+                        Add
+                    </button>
+                    </form>
+                    <br>
+                    <p>Remove a category from the current list:</p>
+                    <form id="edit_categ" #removeForm="ngForm" (ngSubmit)="removeCategory(removeForm.value)">
+                        
+                        <input
+                        type="text"
+                        class="form-control"
+                        id="delete_category"
+                        [(ngModel)]="removeForm.delete_category"
+                        name="delete_category"
+                        />
+                        <button
+                            class="btn btn-primary"
+                            type="submit"
+                            [disabled]="!postForm.valid"
+                        >
+                        Remove
+                    </button>
+                    </form>
+                </div>
+                <div class="form-group">
+                    <h5>Contest type</h5>
+                    <p>Current type of the contest: {{contest.contest_type}}</p>
+                    <select 
+                        name="contest_type" 
+                        id="contest_type" 
+                        class="form-control"
+                        [(ngModel)]="postForm.contest_type">
+                        <option *ngFor="let contest_type of contest_types" [value]="contest_type.name">
+                            {{ contest_type.name }}
+                        </option>
+                    </select>
+                    
+                </div>
+                <br>
+                <div>
+                    <h5>Total number of competitors</h5>
+                    <p>Current total number of competitors: {{contest.total_competitors_number}}</p>
+                    <input
+                    type="text"
+                    class="form-control"
+                    id="total_competitors_number"
+                    [(ngModel)]="postForm.total_competitors_number"
+                    name="total_competitors_number"
+                    />
+                </div>
+                <br>
+                <div class="form-group">
+                        <h5>Number of rounds</h5>
+                        <p>Current number of rounds: {{contest.rounds_number}}</p>
+                        <input
+                        type="text"
+                        class="form-control"
+                        id="rounds_number"
+                        [(ngModel)]="postForm.rounds_number"
+                        name="rounds_number"
+                        />
+                </div>
+                <br>
+                <div class="form-group">
+                        <h5>Number of competitors per series</h5>
+                        <p>Current number of competitors per series: {{contest.competitors_number_per_serie}}</p>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="competitors_number_per_serie"
+                            [(ngModel)]="postForm.competitors_number_per_serie"
+                            name="competitors_number_per_serie"
+                        />
+                </div>
+                <br>
+                <div class="form-group">
+                    <h5>Password for the jury</h5>
+                    <input
+                        type="password"
+                        class="form-control"
+                        id="password"
+                        [(ngModel)]="postForm.password"
+                        name="password"
+                    />
+                </div>
+                <button
+                class="btn btn-primary btn-lg"
+                type="submit"
+                [disabled]="!postForm.valid"
+                >
+                Submit
+                </button>
+            </form>
+            </div>
+        </div>
+    </div>
+</body>
