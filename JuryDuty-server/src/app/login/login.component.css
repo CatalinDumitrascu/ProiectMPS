@@ -1,0 +1,44 @@
+body{
+    height: 100vh; /* For 100% screen height */
+    width:  100vw;
+    background-image: linear-gradient(to bottom right, #de6161, #2657eb);
+    padding-top: 100px;
+}
+.welcome{
+    display: flex;
+    justify-content: center;
+    color:white;
+    padding-bottom: 50px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.19);
+}
+.card{
+    border: none;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    background-image: linear-gradient(to bottom right, #e08f8f, #6f8de9);
+}
+.card-header{
+    padding-left: 8%;
+    
+}
+.col-md-8{
+    flex-basis: 100%;
+    max-width: 100%;
+    padding-left: 7%;
+    padding-right: 7%;
+}
+.card-body{
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+.form-group{
+    max-width:500x;
+}
+.row{
+    /* display: flex;
+    flex-direction: column;
+    align-items: center; */
+    /* margin-left: 0;
+    margin-right: 0;
+    padding-right: 0;
+    padding-left: 0; */
+}
