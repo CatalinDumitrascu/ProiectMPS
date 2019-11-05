@@ -1,1 +1,139 @@
-<p>edit-contest works!</p>
+<div class="container">
+        <h2>Edit a contest</h2>
+        <br><br>
+        <div class="row">
+          <div class="col-xs-12 col-md-6 col-md-offset-3">
+            <form #postForm="ngForm" (ngSubmit)="onSubmit(postForm.value)">
+                <div class="form-group">
+                    <label for="title">Alegeti un concurs:</label>
+                    <p>Stilul curent al concursului: {{contest.contest_name}}</p>
+                    <select 
+                        name="contest_name_id" 
+                        id="contest_name_id" 
+                        class="form-control"
+                        [(ngModel)]="postForm.contest_name_id"
+                        (change)="onSelect($event.target.value)">
+                        <option *ngFor="let contest_name of contest_names" [value]="contest_name.id" >
+                          {{ contest_name.name }}
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group">
+                  <label for="title">Categoriile de jurizat:</label>
+                  <p>Categoriile curente:</p>
+                  <div *ngFor="let categ of contest.contest_categs">
+                        <td class="table-cell">{{categ.name}}</td>
+                    </div>
+                  <select
+                      name="contest_categs"
+                      id="contest_categs" 
+                      class="form-control"
+                      multiple="multiple"
+                      [(ngModel)]="postForm.contest_categs">
+                    <option *ngFor="let category of categories" value="category.name">
+                      {{category.name}}
+                    </option>
+                  </select>
+                  <form #addForm="ngForm" (ngSubmit)="addNewCategory(addForm.value)">
+                        <p>Adauga o noua categorie:</p>
+                        <input
+                        type="text"
+                        class="form-control"
+                        id="new_category"
+                        [(ngModel)]="addForm.new_category"
+                        name="new_category"
+                        />
+                        <button
+                            class="btn btn-primary"
+                            type="submit"
+                            [disabled]="!postForm.valid"
+                        >
+                        Adauga
+                    </button>
+                    </form>
+                    <form #removeForm="ngForm" (ngSubmit)="removeCategory(removeForm.value)">
+                        <p>Sterge o categorie:</p>
+                        <input
+                        type="text"
+                        class="form-control"
+                        id="delete_category"
+                        [(ngModel)]="removeForm.delete_category"
+                        name="delete_category"
+                        />
+                        <button
+                            class="btn btn-primary"
+                            type="submit"
+                            [disabled]="!postForm.valid"
+                        >
+                        Sterge
+                    </button>
+                    </form>
+                </div>
+                <div class="form-group">
+                    <label for="title">Tip concurs</label>
+                    <p>Tipul curent al concursului: {{contest.contest_type}}</p>
+                    <select 
+                        name="contest_type" 
+                        id="contest_type" 
+                        class="form-control"
+                        [(ngModel)]="postForm.contest_type">
+                        <option *ngFor="let contest_type of contest_types" [value]="contest_type.name">
+                          {{ contest_type.name }}
+                        </option>
+                    </select>
+                    
+                </div>
+                <div>
+                  <label for="title">Numar total de concurenti</label>
+                  <p>Numar curent de concurenti: {{contest.total_competitors_number}}</p>
+                    <input
+                    type="text"
+                    class="form-control"
+                    id="total_competitors_number"
+                    ngModel
+                    name="total_competitors_number"
+                    />
+                </div>
+                <div class="form-group">
+                        <label for="title">Numar runde</label>
+                        <p>Numar curent de runde: {{contest.rounds_number}}</p>
+                        <input
+                        type="text"
+                        class="form-control"
+                        id="rounds_number"
+                        ngModel
+                        name="rounds_number"
+                        />
+                </div>
+                <div class="form-group">
+                        <label for="title">Numar concurenti per serie</label>
+                        <p>Numar curent de concurenti per serie: {{contest.competitors_number_per_serie}}</p>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="competitors_number_per_serie"
+                          ngModel
+                          name="competitors_number_per_serie"
+                        />
+                </div>
+                <div class="form-group">
+                    <label for="title">Parola conectare juriu</label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="password"
+                      ngModel
+                      name="password"
+                    />
+                </div>
+              <button
+                class="btn btn-primary"
+                type="submit"
+                [disabled]="!postForm.valid"
+              >
+                Submit
+              </button>
+            </form>
+          </div>
+        </div>
+    </div>
