@@ -90,7 +90,7 @@
                     type="text"
                     class="form-control"
                     id="total_competitors_number"
-                    ngModel
+                    [(ngModel)]="postForm.total_competitors_number"
                     name="total_competitors_number"
                     />
                 </div>
@@ -101,7 +101,7 @@
                         type="text"
                         class="form-control"
                         id="rounds_number"
-                        ngModel
+                        [(ngModel)]="postForm.rounds_number"
                         name="rounds_number"
                         />
                 </div>
@@ -112,7 +112,7 @@
                           type="text"
                           class="form-control"
                           id="competitors_number_per_serie"
-                          ngModel
+                          [(ngModel)]="postForm.competitors_number_per_serie"
                           name="competitors_number_per_serie"
                         />
                 </div>
@@ -122,7 +122,7 @@
                       type="password"
                       class="form-control"
                       id="password"
-                      ngModel
+                      [(ngModel)]="postForm.password"
                       name="password"
                     />
                 </div>

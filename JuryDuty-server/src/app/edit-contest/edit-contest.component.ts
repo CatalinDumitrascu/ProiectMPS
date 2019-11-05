@@ -9,6 +9,7 @@ import { FirebaseService } from '../services/firebase.service';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { config } from '../config';
+
 @Component({
   selector: 'app-edit-contest',
   templateUrl: './edit-contest.component.html',
@@ -67,12 +68,36 @@ export class EditContestComponent implements OnInit {
     });
   }
 
-  onSubmit(){
+  onSubmit(contest){
+    if (contest['contest_name_id'] == null){
+      contest['contest_name_id'] = this.contest['contest_name_id']
+    }
+    if (contest['contest_type'] == null){
+      contest['contest_type'] = this.contest['contest_type']
+    }
+    if (contest['total_competitors_number'] == null){
+      contest['total_competitors_number'] = this.contest['total_competitors_number']
+    }
+    if (contest['rounds_number'] == null){
+      contest['rounds_number'] = this.contest['rounds_number']
+    }
+    if (contest['competitors_number_per_serie'] == null){
+      contest['competitors_number_per_serie'] = this.contest['competitors_number_per_serie']
+    }
+    if (contest['password'] == null){
+      contest['password'] = this.contest['password']
+    }
+    if (contest['contest_categs'] == null){
+      contest['contest_categs'] = this.contest_categs[contest.contest_name_id].categories
+    }
+    if (contest['contest_name'] == null){
+      contest['contest_name'] = this.contest_names[contest.contest_name_id].name
+    }
+    contest.key = this.contest.key
+    console.log(contest)
     
-    console.log(this.contest)
-    // contest.contest_categs = this.contest_categs[contest.contest_name_id].categories
-    // contest.contest_name = this.contest_names[contest.contest_name_id].name
-    this.firebaseService.updateContest(this.contest.key, this.contest)
+
+    this.firebaseService.updateContest(contest.key, contest)
     this.router.navigate(['/home'])
   }
   addNewCategory(categ){
