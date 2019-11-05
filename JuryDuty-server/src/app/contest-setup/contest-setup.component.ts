@@ -9,6 +9,7 @@ import { FirebaseService } from '../services/firebase.service';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { config } from '../config';
+import { identifierModuleUrl } from '@angular/compiler';
 
 @Component({
   selector: 'app-contest-setup',
@@ -18,9 +19,9 @@ import { config } from '../config';
 
 export class ContestSetupComponent implements OnInit {
   contest_types = [
-    {id: 0, name: 'Battle'},
-    {id: 1, name: 'Evolutie sincrona'},
-    {id: 2, name: 'Evolutie asincrona'}
+    {id: 0, name: 'Battle', competitors_number_per_serie: '2'},
+    {id: 1, name: 'Evolutie sincrona', competitors_number_per_serie: ''},
+    {id: 2, name: 'Evolutie asincrona', competitors_number_per_serie: '1'}
   ]
   contest_names = [
     {id: 0, name: 'Dans'},
@@ -35,6 +36,10 @@ export class ContestSetupComponent implements OnInit {
   categories = []
   currentContest = null
   contests: Observable<any[]>;
+  competitors_number_per_serie: string;
+  competitors_eliminate: string;
+  disabled1: Boolean;
+  disabled2: Boolean;
 
   constructor(
     private http: HttpClient,
@@ -43,23 +48,12 @@ export class ContestSetupComponent implements OnInit {
     private firebaseService: FirebaseService,
     private db: AngularFirestore) {
       this.titleService.setTitle("JuryDuty - contest setup");
+      this.disabled1 = false;
+      this.disabled2 = false;
     }
 
   ngOnInit() {
     this.contests = this.db.collection(config.collection_endpoint).valueChanges();
-    // this.contests = this.db
-    // .collection(config.collection_endpoint)
-    // .snapshotChanges()
-    // .map(actions => {
-    //   return actions.map(a => {
-    //     // Get document data
-    //     const data = a.payload.doc.data() as Contest;
-    //     //Get document id
-    //     const id = a.payload.doc.id;
-    //     //Use spread operator to add the id to the document data
-    //     return { id, ...data };
-    //   });
-    // });
   }
 
   onSubmit(contest: Contest){
@@ -68,6 +62,9 @@ export class ContestSetupComponent implements OnInit {
     contest.done = false;
     contest.current_round_number = '0';
     contest.current_series_number = '0';
+    contest.competitors_number_per_serie = this.competitors_number_per_serie;
+    contest.competitors_eliminate = this.competitors_eliminate;
+    contest.connected_juries_num = '2';
     return this.firebaseService.addContest(contest)
     .then(
       res => {
@@ -80,5 +77,22 @@ export class ContestSetupComponent implements OnInit {
 
   onSelect(contestTypeId) {
     this.categories = this.contest_categs[contestTypeId].categories;
+  }
+
+  onOptionsSelected(contestTypeName){
+    if(contestTypeName == 'Battle'){
+      this.competitors_number_per_serie = '2';
+      this.competitors_eliminate = '';
+      this.disabled1 = true;
+      this.disabled2 = true;
+    } else if(contestTypeName == 'Evolutie asincrona'){
+      this.competitors_number_per_serie = '1';
+      this.disabled1 = true;
+    } else {
+      this.competitors_number_per_serie = '';
+      this.competitors_eliminate = '';
+      this.disabled1 = false;
+      this.disabled2 = false;
+    }
   }
 }

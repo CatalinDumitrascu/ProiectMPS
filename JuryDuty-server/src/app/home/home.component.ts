@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Contest, Competitor, NotaJuriu, NotaCategorie} from '../models';
+import { Contest, Competitor, NotaJuriu, NotaCategorie, Serie} from '../models';
 import { FirebaseService } from '../services/firebase.service';
 import { Router } from '@angular/router';
 import { config } from '../config';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { ContestSetupComponent } from '../contest-setup/contest-setup.component';
+import { Key } from 'protractor';
 
 @Component({
   selector: 'app-home',
@@ -15,52 +16,65 @@ export class HomeComponent implements OnInit {
 
   contests: Contest[];
   contest = null;
-  disabled: Boolean;
+  disabled = false;
   emptyTable: Boolean;
   competitors = [];
   competitors_in_contest = [];
   series = [];
   contest_series = [];
   rounds = null;
+  current_round = [];
+  startDisabled = false;
 
   constructor(
     public firebaseService: FirebaseService,
     private router: Router,
     private db: AngularFirestore
   ) { 
-    this.disabled = true;
-    this.emptyTable = true;
     this.rounds = null;
+    this.emptyTable = true;
 
     this.firebaseService.getContestsAsync().subscribe(actionArray => {
       this.contests = actionArray.map(item => { return item as Contest });
       this.contest = this.contests[0];
       this.emptyTable = false;
-      this.firebaseService.getCompetitors(this.contest.key)
-      .subscribe( result => {
-        this.competitors = result.map(it => it.payload.doc.data())
-      })
+      this.disabled = true;
     });
+    this.firebaseService.getCompetitorsAsync().subscribe(actionArray => {
+      this.competitors = actionArray.map(item => { return item as Competitor });
+    });
+   
 
   }
 
   ngOnInit() {
     this.contest = {done: false, key: ""};
     this.getContest()
-    if(this.contest.done == true){
-      this.disabled = false;
-    }
   }
 
+  deleteContest(){
+    this.getContest();
+    if(this.contest.done == true){
+      this.firebaseService.deleteContest(this.contest.key)
+      .then(
+        res => {
+          window.location.reload();
+        },
+        err => {
+          console.log(err);
+        }
+      )
+    }
+  }
   getContest(){
     this.firebaseService.getContestsAsync().subscribe(actionArray => {
       this.contests = actionArray.map(item => { return item as Contest });
       this.contest = this.contests[0];
+      this.disabled = true;
       this.emptyTable = false;
-      this.firebaseService.getCompetitors(this.contest.key)
-      .subscribe( result => {
-        this.competitors = result.map(it => it.payload.doc.data())
-      })
+    });
+    this.firebaseService.getCompetitorsAsync().subscribe(actionArray => {
+      this.competitors = actionArray.map(item => { return item as Competitor });
     });
   }
 
@@ -72,6 +86,53 @@ export class HomeComponent implements OnInit {
       }
     }
     return sum / notes.length;
+  }
+
+  compareNotes(nota_juriuConc1: Array<NotaCategorie>, nota_juriuConc2: Array<NotaCategorie>){
+    for(let i = 0; i < nota_juriuConc1.length; i++){
+        if(nota_juriuConc1[i].note < nota_juriuConc2[i].note){
+          return -1;
+        }
+        if(nota_juriuConc1[i].note > nota_juriuConc2[i].note){
+          return 1;
+        }
+    }
+    return Math.round(Math.random());
+  }
+  compare = (competitor1: Competitor, competitor2: Competitor) => {
+    if(this.calculateAverageNote(competitor1.notes) < this.calculateAverageNote(competitor2.notes)){
+      return -1;
+    }
+    if(this.calculateAverageNote(competitor1.notes) > this.calculateAverageNote(competitor2.notes)){
+      return 1;
+    }
+    if(this.calculateAverageNote(competitor1.notes) == this.calculateAverageNote(competitor2.notes)){
+      // departajare
+      // compar notele incepand cu prima categorie
+      for(let i = 0; i < competitor1.notes.length; i++){
+        this.compareNotes(competitor1.notes[i].nota_juriu, competitor2.notes[i].nota_juriu)
+      }
+    }
+    return Math.round(Math.random());
+  }
+
+  compareAsinc = (serie1: Serie, serie2: Serie) =>{
+    var comp1 = serie1.serie[0];
+    var comp2 = serie2.serie[0]
+    if(this.calculateAverageNote(comp1.notes) < this.calculateAverageNote(comp2.notes)){
+      return -1;
+    }
+    if(this.calculateAverageNote(comp1.notes) > this.calculateAverageNote(comp2.notes)){
+      return 1;
+    }
+    if(this.calculateAverageNote(comp1.notes) == this.calculateAverageNote(comp2.notes)){
+      // departajare
+      // compar notele incepand cu prima categorie
+      for(let i = 0; i < comp1.notes.length; i++){
+        this.compareNotes(comp1.notes[i].nota_juriu, comp2.notes[i].nota_juriu)
+      }
+    }
+    return Math.round(Math.random());
   }
 
   shuffle(array) {
@@ -87,6 +148,7 @@ export class HomeComponent implements OnInit {
   }
 
   manageRounds(){
+    this.getContest()
     this.series = [];
     this.contest_series = []
     this.competitors_in_contest = this.competitors;
@@ -113,20 +175,60 @@ export class HomeComponent implements OnInit {
         break;
       }
     }
-    // while (this.competitors_in_contest.length > 0)
-    //     this.series.push(this.competitors_in_contest.splice(0, size));
 
-    for (let index = 0; index < this.competitors_in_contest.length; index += size) {
-      let myChunk = this.competitors_in_contest.slice(index, index+size);
-      console.log(myChunk)
+    for (let index = 0; index < this.competitors_in_contest.length; index += +size) {
+      let myChunk = this.competitors_in_contest.slice(index, index + +size);
       this.series.push(myChunk);
     }
+
     // pun in alt array pt firebase
     for(let i = 0; i < this.series.length; i++){
-      // simulare note
+      // // simulare note sincron
+      // for(let j = 0; j < this.series[i].length; j++){
+      //   this.series[i][j].notes = [];
+      //   this.series[i][j].notes.push(
+      //     {
+      //       nota_juriu: [
+      //         {categ: 'Tehnica', note: '10', weight: '1/3'},
+      //         {categ: 'Coregrafie', note: '10', weight: '1/3'},
+      //         {categ: 'Impresie Ansamblu', note: '10', weight: '1/3'}
+      //       ]
+      //     }
+      //   )
+      //   this.series[i][j].notes.push(
+      //     {
+      //       nota_juriu: [
+      //         {categ: 'Tehnica', note: '9', weight: '1/3'},
+      //         {categ: 'Coregrafie', note: '8', weight: '1/3'},
+      //         {categ: 'Impresie Ansamblu', note: '7', weight: '1/3'}
+      //       ]
+      //     }
+      //   )
+      // }
+      // // simulare note asincron
+      // this.series[i][0].notes = []
+      // this.series[i][0].notes.push(
+      //   {
+      //     nota_juriu: [
+      //       {categ: 'Tehnica', note: '10', weight: '1/3'},
+      //       {categ: 'Coregrafie', note: '10', weight: '1/3'},
+      //       {categ: 'Impresie Ansamblu', note: '10', weight: '1/3'}
+      //     ]
+      //   }
+      // )
+      // this.series[i][0].notes.push(
+      //   {
+      //     nota_juriu: [
+      //       {categ: 'Tehnica', note: '10', weight: '1/3'},
+      //       {categ: 'Coregrafie', note: '10', weight: '1/3'},
+      //       {categ: 'Impresie Ansamblu', note: '10', weight: '1/3'}
+      //     ]
+      //   }
+      // )
+
+      // // simulare note battle
       // this.series[i][0].notes = [];
       // this.series[i][1].notes = [];
-  
       // this.series[i][0].notes.push(
       //   {
       //     nota_juriu: [
@@ -165,6 +267,7 @@ export class HomeComponent implements OnInit {
       // )
       this.contest_series.push({serieNr: i, serie: this.series[i]})
     }
+    // this.contest.juries_votes_finish = '2';
     this.contest.rounds.push({roundNr: this.contest.current_round_number, round: this.contest_series});
     this.firebaseService.updateContest(this.contest.key, this.contest)
 
@@ -172,66 +275,89 @@ export class HomeComponent implements OnInit {
 
 
   getWinners(){
-    this.competitors = [];
-    // trigger here
-    // if(this.contest.juries_votes_finish == this.contest.connected_juries_num){ // s-a terminat runda
-    switch (this.contest.contest_type) {
-      case 'Battle': {
-        for(let i = 0; i < this.contest.rounds[this.contest.current_round_number].round.length; i++){ // seriile curente
-          // battle
-          if(this.calculateAverageNote(this.contest.rounds[this.contest.current_round_number].round[i].serie[0].notes) >= 
-          this.calculateAverageNote(this.contest.rounds[this.contest.current_round_number].round[i].serie[1].notes)){
-            this.competitors.push(this.contest.rounds[this.contest.current_round_number].round[i].serie[0])
-          } else{
-            this.competitors.push(this.contest.rounds[this.contest.current_round_number].round[i].serie[1])
+    this.getContest();
+    if(this.contest.juries_votes_finish == this.contest.connected_juries_num){ // s-a terminat runda
+      switch (this.contest.contest_type) {
+        case 'Battle': {
+          for(let i = 0; i < this.contest.rounds[this.contest.current_round_number].round.length; i++){ // seriile curente
+            // battle
+            let cmp = this.compare(this.contest.rounds[this.contest.current_round_number].round[i].serie[0],
+               this.contest.rounds[this.contest.current_round_number].round[i].serie[1]);
+            if(cmp == 1){
+              this.firebaseService.eliminateCompetitor(this.contest.rounds[this.contest.current_round_number].round[i].serie[1].key)
+            } else if(cmp == -1){
+              this.firebaseService.eliminateCompetitor(this.contest.rounds[this.contest.current_round_number].round[i].serie[0].key)
+            }
           }
+          break;
         }
-        break;
-      }
 
-      case 'Evolutie asincrona': {
-        var competitors_number_pass = 2; // tbd!!
-        // handle winner
-        var series = this.contest.rounds[this.contest.current_round_number].round;
-        series.sort((a, b) => {
-          return this.calculateAverageNote(b.serie[0].notes) - this.calculateAverageNote(a.serie[0].notes)
-        })
-        console.log(this.contest.competitors)
-        for(let i = 0; i < this.contest.competitors.length - competitors_number_pass; i++){ // seriile curente
-            this.competitors.push(series[i].serie[0])
-        }
-        break;
-      }
-
-      case 'Evolutie sincrona': {
-        var competitors_number_eliminate = this.contest.competitors_number_per_serie / 2; // tbd!!
-        for(let i = 0; i < this.contest.rounds[this.contest.current_round_number].round.lengths; i++){ // seriile curente
-          // sortez desc seria
+        case 'Evolutie asincrona': {
+          var competitors_number_eliminate = this.contest.competitors_eliminate;
           var series = this.contest.rounds[this.contest.current_round_number].round;
-          series.sort((a, b) => {
-            return this.calculateAverageNote(b.serie[0].notes) - this.calculateAverageNote(a.serie[0].notes)
-          })
-          for(let j = 0; j < competitors_number_eliminate; j++){
-            this.competitors.push(series[i].serie[j])
+          // sort
+          series.sort(this.compareAsinc)
+
+          if(this.contest.current_round_number == this.contest.rounds_number - 1) { // ultima runda
+            // numai elimin cat trebuia, iau doar castigatorul
+            for(let i = 0; i < this.competitors.length - 1; i++){ // seriile curente
+              this.firebaseService.eliminateCompetitor(series[i].serie[0].key)
+            }
+            break;
           }
-          
+
+          // eliminate last competitors
+          for(let i = 0; i < competitors_number_eliminate; i++){ // seriile curente
+            this.firebaseService.eliminateCompetitor(series[i].serie[0].key)
+          }
+          break;
         }
-        break;
+
+        case 'Evolutie sincrona': {
+          var competitors_number_eliminate = this.contest.competitors_eliminate;
+          var series = this.contest.rounds[this.contest.current_round_number].round;
+          // sort
+          if(this.contest.current_round_number == this.contest.rounds_number - 1) { // ultima runda
+            // numai elimin cat trebuia, iau doar castigatorul
+            serie = this.contest.rounds[this.contest.current_round_number].round[0].serie
+            serie.sort(this.compare)
+            for(let j = 0; j < this.competitors.length - 1; j++){
+              this.firebaseService.eliminateCompetitor(serie[j].key)
+              console.log(serie[j].key)
+            }
+            break;
+          }
+
+          for(let i = 0; i < this.contest.rounds[this.contest.current_round_number].round.length; i++){ // seriile curente
+            // sortez desc seria
+            var serie = this.contest.rounds[this.contest.current_round_number].round[i].serie;
+            serie.sort(this.compare)
+            for(let j = 0; j < competitors_number_eliminate; j++){
+              this.firebaseService.eliminateCompetitor(serie[j].key)
+              console.log(serie[j].key)
+            }
+          }
+          break;
+        }
+
+        default: {
+          break;
+        }
+
       }
-      default: {
-        break;
-      }
+      this.contest.current_round_number++;
+      this.firebaseService.updateContest(this.contest.key, this.contest);
     }
-    this.contest.current_round_number++;
-    this.contest.competitors = this.competitors;
-    this.firebaseService.updateContest(this.contest.key, this.contest);
-  //}
   }
 
-  startContest(){
-    while(this.contest.current_round_number < this.contest.rounds_number){
+  startRound(){
+    if(this.contest.current_round_number < this.contest.rounds_number){
       this.manageRounds();
       this.getWinners();
+    }
+    if(this.contest.current_round_number == this.contest.rounds_number){
+      this.contest.done = true;
+      this.firebaseService.updateContest(this.contest.key, this.contest);
     }
   }
 

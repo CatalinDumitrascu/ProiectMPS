@@ -5,19 +5,19 @@
                     class="btn btn-lg btn-primary btn-block mb-1"
                     type="button"
                     routerLink="/add-contest"
-                    [disabled]="!disabled">
-                    Add contest
+                    [disabled]="disabled">
+                    Adauga concurs
                 </button>
                 <button
                     class="btn btn-lg btn-primary btn-block mb-1"
                     type="button"
-                    (click)="startContest()">
-                    Start
+                    (click)="startRound()">
+                    Start runda
                 </button>
                 <br> <br>
-                <h2>Current contest</h2>
                 <div *ngIf="emptyTable; else elseBlock">Nici un concurs curent</div>
                 <ng-template #elseBlock>
+                    <h2>Concursul curent</h2>
                     <table class="table table--responsive">
                         <thead class="table__header">
                             <th class="table__head--align-left">Nume</th>
@@ -48,7 +48,13 @@
                     class="btn btn-lg btn-primary btn-block mb-1"
                     type="button"
                     routerLink="/edit-contest">
-                    Edit contest
+                    Editeaza concurs
+                </button>
+                <button
+                    class="btn btn-lg btn-primary btn-block mb-1"
+                    type="button"
+                    (click)="deleteContest()">
+                    Sterge concurs
                 </button>
         </div>
     </div>

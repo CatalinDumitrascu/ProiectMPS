@@ -12,10 +12,10 @@ export class FirebaseService {
 
   contests: AngularFirestoreCollection<Contest>;
   private contestDoc: AngularFirestoreDocument<Contest>;
-
+  competitorsPerContest = [];
   competitors: AngularFirestoreCollection<Competitor>;
   private competitorDoc: AngularFirestoreDocument<Competitor>;
-
+  competitor: Competitor;
   constructor(
     private http: HttpClient,
     private db: AngularFirestore
@@ -57,8 +57,7 @@ export class FirebaseService {
   }
 
   eliminateCompetitor(id:string){
-    let competitorDoc = this.db.doc<Competitor>(`${config.competitors}/${id}`);
-    competitorDoc.update({flag: "1"});
+    return this.db.collection(config.competitors).doc(id).update({flag: "1"});
   }
 
   updateCompetitor(id: string, competitor: Competitor){
@@ -74,10 +73,17 @@ export class FirebaseService {
   }
 
   deleteContest(id: string){
-    // get contestDoc
-    this.contestDoc = this.db.doc<Contest>(`${config.collection_endpoint}/${id}`);
-    // delete the document
-    this.contestDoc.delete();
+    // delete all contest competitors
+    // does not work properly
+    this.getCompetitors(id)
+      .subscribe( result => {
+        this.competitorsPerContest = result.map(it => it.payload.doc.data())
+        for(let competitor of this.competitorsPerContest){
+          this.db.collection(config.competitors).doc(competitor.key).delete();
+        }
+      });
+
+    return this.db.collection(config.collection_endpoint).doc(id).delete();
   }
 
 }

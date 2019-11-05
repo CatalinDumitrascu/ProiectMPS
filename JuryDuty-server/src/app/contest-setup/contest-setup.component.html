@@ -1,5 +1,5 @@
 <div class="container">
-        <h2>Add a contest</h2>
+        <h2>Adauga concurs</h2>
         <br><br>
         <div class="row">
           <div class="col-xs-12 col-md-6 col-md-offset-3">
@@ -36,7 +36,8 @@
                         name="contest_type" 
                         id="contest_type" 
                         class="form-control"
-                        [(ngModel)]="postForm.contest_type">
+                        [(ngModel)]="postForm.contest_type"
+                        (change)="onOptionsSelected($event.target.value)">
                         <option *ngFor="let contest_type of contest_types" [value]="contest_type.name">
                           {{ contest_type.name }}
                         </option>
@@ -53,6 +54,7 @@
                     name="total_competitors_number"
                     />
                 </div>
+                <br>
                 <div class="form-group">
                         <label for="title">Numar runde</label>
                         <input
@@ -70,11 +72,23 @@
                           type="text"
                           class="form-control"
                           id="competitors_number_per_serie"
-                          required
-                          ngModel
+                          [(ngModel)]="competitors_number_per_serie"
+                          [disabled]='disabled1'
                           name="competitors_number_per_serie"
                         />
                 </div>
+                <div class="form-group">
+                  <label for="title">Numar concurenti ce vor fi eliminati</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="competitors_eliminate"
+                    required
+                    [(ngModel)]="competitors_eliminate"
+                    [disabled]='disabled2'
+                    name="competitors_eliminate"
+                  />
+              </div>
                 <div class="form-group">
                     <label for="title">Parola conectare juriu</label>
                     <input
