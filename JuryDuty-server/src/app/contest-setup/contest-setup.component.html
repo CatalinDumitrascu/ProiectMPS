@@ -1,113 +1,113 @@
 <div class="container">
-        <h2>Adauga concurs</h2>
-        <br><br>
-        <div class="row">
-          <div class="col-xs-12 col-md-6 col-md-offset-3">
-            <form #postForm="ngForm" (ngSubmit)="onSubmit(postForm.value)">
-                <div class="form-group">
-                    <label for="title">Alegeti un concurs:</label>
-                    <select 
-                        name="contest_name_id" 
-                        id="contest_name_id" 
-                        class="form-control"
-                        [(ngModel)]="postForm.contest_name_id"
-                        (change)="onSelect($event.target.value)">
-                        <option *ngFor="let contest_name of contest_names" [value]="contest_name.id" >
-                          {{ contest_name.name }}
-                        </option>
-                    </select>
-                </div>
-                <div class="form-group">
-                  <label for="title">Categoriile de jurizat:</label>
-                  <select
-                      name="contest_categs"
-                      id="contest_categs" 
-                      class="form-control"
-                      multiple="multiple"
-                      [(ngModel)]="postForm.contest_categs">
-                    <option *ngFor="let category of categories" value="category.name">
-                      {{category.name}}
+    <h2>Adauga concurs</h2>
+    <br><br>
+    <div class="row">
+      <div class="col-xs-12 col-md-6 col-md-offset-3">
+        <form #postForm="ngForm" (ngSubmit)="onSubmit(postForm.value)">
+            <div class="form-group">
+                <label for="title">Alegeti un concurs:</label>
+                <select 
+                    name="contest_name_id" 
+                    id="contest_name_id" 
+                    class="form-control"
+                    [(ngModel)]="postForm.contest_name_id"
+                    (change)="onSelect($event.target.value)">
+                    <option *ngFor="let contest_name of contest_names" [value]="contest_name.id" >
+                      {{ contest_name.name }}
                     </option>
-                  </select>
-                </div>
-                <div class="form-group">
-                    <label for="title">Tip concurs</label>
-                    <select 
-                        name="contest_type" 
-                        id="contest_type" 
-                        class="form-control"
-                        [(ngModel)]="postForm.contest_type"
-                        (change)="onOptionsSelected($event.target.value)">
-                        <option *ngFor="let contest_type of contest_types" [value]="contest_type.name">
-                          {{ contest_type.name }}
-                        </option>
-                    </select>
-                </div>
-                <div>
-                  <label for="title">Numar total de concurenti</label>
+                </select>
+            </div>
+            <div class="form-group">
+              <label for="title">Categoriile de jurizat:</label>
+              <select
+                  name="contest_categs"
+                  id="contest_categs" 
+                  class="form-control"
+                  multiple="multiple"
+                  [(ngModel)]="postForm.contest_categs">
+                <option *ngFor="let category of categories" value="category.name">
+                  {{category.name}}
+                </option>
+              </select>
+            </div>
+            <div class="form-group">
+                <label for="title">Tip concurs</label>
+                <select 
+                    name="contest_type" 
+                    id="contest_type" 
+                    class="form-control"
+                    [(ngModel)]="postForm.contest_type"
+                    (change)="onOptionsSelected($event.target.value)">
+                    <option *ngFor="let contest_type of contest_types" [value]="contest_type.name">
+                      {{ contest_type.name }}
+                    </option>
+                </select>
+            </div>
+            <div>
+              <label for="title">Numar total de concurenti</label>
+                <input
+                type="text"
+                class="form-control"
+                id="total_competitors_number"
+                required
+                ngModel
+                name="total_competitors_number"
+                />
+            </div>
+            <br>
+            <div class="form-group">
+                    <label for="title">Numar runde</label>
                     <input
                     type="text"
                     class="form-control"
-                    id="total_competitors_number"
+                    id="rounds_number"
                     required
                     ngModel
-                    name="total_competitors_number"
+                    name="rounds_number"
                     />
-                </div>
-                <br>
-                <div class="form-group">
-                        <label for="title">Numar runde</label>
-                        <input
-                        type="text"
-                        class="form-control"
-                        id="rounds_number"
-                        required
-                        ngModel
-                        name="rounds_number"
-                        />
-                </div>
-                <div class="form-group">
-                        <label for="title">Numar concurenti per serie</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="competitors_number_per_serie"
-                          [(ngModel)]="competitors_number_per_serie"
-                          [disabled]='disabled1'
-                          name="competitors_number_per_serie"
-                        />
-                </div>
-                <div class="form-group">
-                  <label for="title">Numar concurenti ce vor fi eliminati</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="competitors_eliminate"
-                    required
-                    [(ngModel)]="competitors_eliminate"
-                    [disabled]='disabled2'
-                    name="competitors_eliminate"
-                  />
-              </div>
-                <div class="form-group">
-                    <label for="title">Parola conectare juriu</label>
+            </div>
+            <div class="form-group">
+                    <label for="title">Numar concurenti per serie</label>
                     <input
-                      type="password"
+                      type="text"
                       class="form-control"
-                      id="password"
-                      required
-                      ngModel
-                      name="password"
+                      id="competitors_number_per_serie"
+                      [(ngModel)]="competitors_number_per_serie"
+                      [disabled]='disabled1'
+                      name="competitors_number_per_serie"
                     />
-                </div>
-              <button
-                class="btn btn-primary"
-                type="submit"
-                [disabled]="!postForm.valid"
-              >
-                Submit
-              </button>
-            </form>
+            </div>
+            <div class="form-group">
+              <label for="title">Numar concurenti ce vor fi eliminati</label>
+              <input
+                type="text"
+                class="form-control"
+                id="competitors_eliminate"
+                required
+                [(ngModel)]="competitors_eliminate"
+                [disabled]='disabled2'
+                name="competitors_eliminate"
+              />
           </div>
-        </div>
+            <div class="form-group">
+                <label for="title">Parola conectare juriu</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password"
+                  required
+                  ngModel
+                  name="password"
+                />
+            </div>
+          <button
+            class="btn btn-primary"
+            type="submit"
+            [disabled]="!postForm.valid"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
     </div>
+</div>

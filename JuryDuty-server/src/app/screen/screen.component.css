@@ -56,3 +56,48 @@ main{
     li.game-bottom{ 
       border-top:1px solid #aaa;
     }
+    body{
+      background-size: cover;
+      background-image: linear-gradient(to bottom right, #de6161, #2657eb);
+      /* height: auto; */
+      padding-top: 30px;
+      padding-bottom: 30px;
+  }
+  .container{
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-top: 80px;
+      padding-bottom: 80px;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      background-image: linear-gradient(to bottom right, #e08f8f, #6f8de9);
+      padding-top: 50px;
+      padding-bottom: 50px;
+      width: 600px;
+  }
+  form{
+      width: 350px;
+  }
+  input{
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      /* width: 200%; */
+  }
+  select{
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      /* width: 200%; */
+  }
+  button{
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  }
+  label{
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.19);
+  }
+  h2{
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.19);
+  }
+  .col-md-6{
+      flex: 0 0 100%;
+      max-width: 100%;
+  }
